@@ -1,0 +1,9 @@
+__pycache__/
+env/
+.python-version
+.vscode/
+downloads/
+temp/
+assets/
+.vscode/
+archives/
