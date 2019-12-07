@@ -3,14 +3,39 @@ from comic import Comic
 from exceptions import InvalidRangeException
 
 
+def set_alias(title):
+    alias = input('Set an alias for "{}"\n>>> '.format(title))
+    if alias.isnumeric() or alias.isspace() or ' ' in alias:
+        print('not a valid alias, alias should be alphanumeric, no spaces')
+        alias = ''
+    if not Comic.is_alias_unique(alias):
+        print('alias already used')
+    return alias
+
+
+def get_choice(options):
+    print('Pick comic to add or enter q at any time to exit: \n\n')
+    for idx, option in options.items():
+        print('{}. {}'.format(idx + 1, option[0]))
+
+    n = input('\n>>> ')
+    if n == 'q':
+        return 'q'
+    try:
+        return options.get(int(n) - 1, None)
+    except ValueError:
+        return None
+
+
 class HandlerMixin:
     def display_watched(self):
+        watched = Comic.list_watched()
         print('|{:20}      {:<20}|'.format('Comic', 'Alias'))
-        for comic in Comic.list_watched():
+        for comic in watched:
             print('|{:20}      {:<20}|'.format(comic.title, comic.alias))
 
-    def add_comic_to_watched(self):
-        self.driver.get(params={'keyword': self.args.add})
+    def add_comic_to_watched(self, query):
+        self.driver.get(params={'keyword': query})
         table = self.driver.find_element_by_css_selector('table.listing')
         rows = table.find_elements_by_css_selector('tr > td:nth-child(1) > a')
         rows = list(map(
@@ -24,26 +49,15 @@ class HandlerMixin:
 
         choice = None
         while choice is None:
-            print('Pick comic to add or enter q at any time to exit: \n\n')
-            for idx, result in results.items():
-                print('{}. {}'.format(idx + 1, result[0]))
-            n = int(input('\n>>> ')) - 1
+            choice = get_choice(results)
 
-            if n == 'q':
+            if choice == 'q':
                 break
 
-            choice = results.get(n, None)
             if choice:
                 alias = ''
                 while not alias:
-                    alias = input('Set an alias for "{}"\n>>> '
-                                  .format(choice[0]))
-                    if alias.isnumeric() or alias.isspace() or ' ' in alias:
-                        print('not a valid alias, alphanumeric, no spaces')
-                        alias = ''
-                    if not Comic.is_alias_unique(alias):
-                        print('alias already used')
-                        alias = ''
+                    alias = set_alias(choice[0])
 
                 comic = Comic(*choice, alias=alias)
                 comic.save()
@@ -52,19 +66,14 @@ class HandlerMixin:
             else:
                 print('That is not a valid option. Try again.')
 
-    def download(self):
-        alias = self.args.alias
-
-        if not alias:
-            raise ValueError
-
+    def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
+        path = comic.download_issue(self.args.issue, self.driver)
+        print('Comic downloaded to {}'.format(path))
+        return path
 
-        if self.args.issue:
-            path = comic.download_issue(self.args.issue, self.driver)
-            print('Comic downloaded to {}'.format(path))
-
-        elif self.args.range:
+    def download_issues(self, alias, range_, all_):
+        if not all_:
             try:
                 start, end = map(
                     lambda arg: int(arg), self.args.range.split('-')
@@ -74,11 +83,13 @@ class HandlerMixin:
                     'Range should be of form: "a-b", where a and b are '
                     'integers'
                 )
+            comic = Comic.get_by_alias(alias)
             start, end = sorted([start, end])
             paths = comic.download_issues(start, end, self.driver)
             print('Comics downloaded to: ')
             for path in paths:
                 print(path)
+        return paths
 
     def get_updates(self):
         for comic in Comic.list_watched():
@@ -90,8 +101,8 @@ class HandlerMixin:
             for issue in unread:
                 print('  {} - #{}'.format(comic.title, issue))
 
-    def list_available(self):
-        comic = Comic.get_by_alias(self.args.alias)
+    def list_available(self, alias):
+        comic = Comic.get_by_alias(alias)
         available = comic.list_available(self.driver)
         print('Available comics for {}:'.format(comic.title))
         for issue in available:

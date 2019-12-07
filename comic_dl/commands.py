@@ -3,6 +3,8 @@ import argparse
 from driver import Driver
 from handlers import HandlerMixin
 
+from exceptions import AliasNotSpecified
+
 
 class CommandUtility(HandlerMixin):
     def __init__(self, argv, args=None):
@@ -32,6 +34,7 @@ class CommandUtility(HandlerMixin):
         download_options = parser.add_mutually_exclusive_group()
         download_options.add_argument('--issue', '-i', type=int)
         download_options.add_argument('--range', '-r', type=str)
+        download_options.add_argument('--all', action='store_true')
 
         self.args = parser.parse_args(self.argv[1:]) \
             if not self.args else self.args
@@ -40,17 +43,23 @@ class CommandUtility(HandlerMixin):
             self.display_watched()
 
         elif self.args.add:
-            # add query required
-            self.add_comic_to_watched()
+            query = self.args.add
+            self.add_comic_to_watched(query)
 
         elif self.args.download:
-            # alias required
-            # issue, range or --all flag required
-            self.download()
+            alias = self.args.alias
+            if not alias:
+                raise AliasNotSpecified()
+
+            if self.args.issue:
+                self.download(alias, self.args.issue)
+
+            elif self.args.range or self.args.all:
+                self.download_issues(alias, self.args.range, all=self.args.all)
 
         elif self.args.updates:
             self.get_updates()
 
         elif self.args.available:
-            # alias required
-            self.list_available()
+            alias = self.args.alias
+            self.list_available(alias)

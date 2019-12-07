@@ -9,3 +9,7 @@ class ComicDoesNotExist(Exception):
 
     def __init__(self, msg=msg, *args, **kwargs):
         super().__init__(msg, *args, **kwargs)
+
+
+class AliasNotSpecified(Exception):
+    ...
