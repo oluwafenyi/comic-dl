@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from db import ComicDB
 from driver import Driver
-from exceptions import AliasDoesNotExist
+from exceptions import ComicDoesNotExist
 from utils import download_page, zip_comic
 
 
@@ -42,7 +42,7 @@ class Comic:
     def is_alias_unique(cls, alias) -> bool:
         try:
             cls.get_by_alias(alias)
-        except AliasDoesNotExist():
+        except ComicDoesNotExist():
             return True
         return False
 
@@ -51,7 +51,7 @@ class Comic:
         with ComicDB() as db:
             comic = db.get(alias)
         if not comic:
-            raise AliasDoesNotExist()
+            raise ComicDoesNotExist()
         return Comic(*comic[1:])
 
     def download_issue(self, issue, driver: Driver) -> Union[str, None]:
