@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 from db import ComicDB
 from driver import Driver
+from exceptions import AliasDoesNotExist
 
 
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
@@ -73,12 +74,18 @@ class Comic:
 
     @classmethod
     def is_alias_unique(cls, alias):
-        return alias not in [row[2] for row in cls.list_watched()]
+        try:
+            cls.get_by_alias(alias)
+        except AliasDoesNotExist():
+            return True
+        return False
 
     @classmethod
     def get_by_alias(cls, alias):
         with ComicDB() as db:
             comic = db.get(alias)
+        if not comic:
+            raise AliasDoesNotExist()
         return Comic(*comic[1:])
 
     def download_issue(self, issue, driver: Driver) -> Union[str, None]:
