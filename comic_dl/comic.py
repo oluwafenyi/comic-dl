@@ -1,51 +1,13 @@
-import os
 import re
-import zipfile
 from multiprocessing.pool import ThreadPool
 from typing import Union
 
-import requests
 from tqdm import tqdm
 
 from db import ComicDB
 from driver import Driver
 from exceptions import AliasDoesNotExist
-
-
-BASE_PATH = os.path.dirname(os.path.dirname(__file__))
-TEMP_PATH = os.path.join(BASE_PATH, 'temp')
-ARCHIVE_PATH = os.path.join(BASE_PATH, 'archives')
-
-
-def download_pages(entry):
-    page_number, uri = entry
-    res = requests.get(uri)
-    cd = res.headers.get('content-disposition')
-    extension = extension_from_cd(cd)
-    filename = 'page_{}.{}'.format(page_number + 1, extension)
-    path = os.path.join(TEMP_PATH, filename)
-    with open(path, 'wb') as img:
-        for block in res.iter_content(1024):
-            img.write(block)
-    return path
-
-
-def extension_from_cd(cd):
-    result = re.search(r'filename="(.*)"', cd)
-    return result.group(1).split('.')[-1]
-
-
-def zip_comic(comic_title, archive_name, images):
-    print('Zipping comic...')
-    path = os.path.join(ARCHIVE_PATH, comic_title)
-    if not os.path.exists(path):
-        os.makedirs(path)
-    path = os.path.join(path, archive_name)
-    with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_STORED) as zf:
-        for img in images:
-            zf.write(img, compress_type=zipfile.ZIP_STORED)
-            os.remove(img)
-    return path
+from utils import download_page, zip_comic
 
 
 class Comic:
@@ -77,7 +39,7 @@ class Comic:
         return list(map(lambda comic: Comic(*comic[1:]), watched))
 
     @classmethod
-    def is_alias_unique(cls, alias):
+    def is_alias_unique(cls, alias) -> bool:
         try:
             cls.get_by_alias(alias)
         except AliasDoesNotExist():
@@ -101,7 +63,7 @@ class Comic:
             return None
         entries = list(enumerate(matches))
         img_paths = [path for path in tqdm(
-            ThreadPool(8).imap_unordered(download_pages, entries),
+            ThreadPool(8).imap_unordered(download_page, entries),
             desc='{} - #{}'.format(self.title, issue),
             total=len(entries),
         )]
@@ -112,7 +74,7 @@ class Comic:
         self.save()
         return path
 
-    def download_issues(self, start, end, driver: Driver):
+    def download_issues(self, start, end, driver: Driver) -> list:
         paths = []
         for issue in range(start, end + 1):
             path = self.download_issue(issue, driver)

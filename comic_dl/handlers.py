@@ -7,7 +7,7 @@ class HandlerMixin:
     def display_watched(self):
         print('|{:20}      {:<20}|'.format('Comic', 'Alias'))
         for comic in Comic.list_watched():
-            print('|{:20}      {:<20}|'.format(comic[0], comic[2]))
+            print('|{:20}      {:<20}|'.format(comic.title, comic.alias))
 
     def add_comic_to_watched(self):
         self.driver.get(params={'keyword': self.args.add})
