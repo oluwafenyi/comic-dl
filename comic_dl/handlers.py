@@ -1,4 +1,3 @@
-import re
 
 from comic import Comic
 from exceptions import InvalidRangeException
@@ -46,13 +45,7 @@ class HandlerMixin:
                         print('alias already used')
                         alias = ''
 
-                self.driver.get(choice[1])
-                latest_issue = self.driver\
-                    .find_element_by_css_selector('tr > td > a')\
-                    .get_attribute('textContent').strip()
-                search_obj = re.search(r'#(\d+)', latest_issue)
-                latest_issue = int(search_obj.group(1))
-                comic = Comic(*choice, alias=alias, latest_issue=latest_issue)
+                comic = Comic(*choice, alias=alias)
                 comic.save()
                 print('Added "{}" to list of watched comics...'
                       .format(choice[0]))
@@ -86,3 +79,20 @@ class HandlerMixin:
             print('Comics downloaded to: ')
             for path in paths:
                 print(path)
+
+    def get_updates(self):
+        for comic in Comic.list_watched():
+            unread = comic.get_updates(self.driver)
+            if not unread:
+                continue
+            print('Unread Comics for {} -- alias: "{}"'
+                  .format(comic.title, comic.alias))
+            for issue in unread:
+                print('  {} - #{}'.format(comic.title, issue))
+
+    def list_available(self):
+        comic = Comic.get_by_alias(self.args.alias)
+        available = comic.list_available(self.driver)
+        print('Available comics for {}:'.format(comic.title))
+        for issue in available:
+            print(issue)

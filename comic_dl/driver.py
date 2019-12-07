@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 class Driver(selenium.webdriver.Chrome):
     def __init__(self, **kwargs):
         options = Options()
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         options.add_argument("--window-size=1920x1080")
         super().__init__(options=options, **kwargs)
 

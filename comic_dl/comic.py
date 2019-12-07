@@ -5,7 +5,6 @@ from multiprocessing.pool import ThreadPool
 from typing import Union
 
 import requests
-from selenium.common.exceptions import NoSuchElementException
 from tqdm import tqdm
 
 from db import ComicDB
@@ -67,10 +66,15 @@ class Comic:
             db.save(**vars(self))
 
     @classmethod
-    def list_watched(cls):
+    def list_watched(cls) -> list:
+        """
+        Comic Class Method
+        -----------------------------------------------------------------------
+        :returns: list of watched Comic objects
+        """
         with ComicDB() as db:
             watched = db.get_all()
-        return list(map(lambda comic: comic[1:], watched))
+        return list(map(lambda comic: Comic(*comic[1:]), watched))
 
     @classmethod
     def is_alias_unique(cls, alias):
@@ -89,19 +93,12 @@ class Comic:
         return Comic(*comic[1:])
 
     def download_issue(self, issue, driver: Driver) -> Union[str, None]:
-        try:
-            img_404 = driver.find_element_by_css_selector(
-                '#divMsg > div:nth-child(2) > img'
-            )
-            if 'error' in img_404.get_attribute('src'):
-                return None
-        except NoSuchElementException:
-            ...
-
         driver.get('{}/Issue-{}/'.format(self.link, issue),
                    params={'quality': 'hq'})
         driver.find_element_by_css_selector('script:nth-child(5)')
         matches = re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
+        if matches is None:
+            return None
         entries = list(enumerate(matches))
         img_paths = [path for path in tqdm(
             ThreadPool(8).imap_unordered(download_pages, entries),
@@ -121,3 +118,23 @@ class Comic:
             path = self.download_issue(issue, driver)
             paths.append(path)
         return paths
+
+    def get_updates(self, driver: Driver) -> list:
+        driver.get(self.link)
+        latest_issue = self.driver\
+            .find_element_by_css_selector('tr > td > a')\
+            .get_attribute('textContent').strip()
+        search_obj = re.search(r'#(\d+)', latest_issue)
+        latest_issue = int(search_obj.group(1))
+        self.latest_issue = latest_issue
+        self.save()
+        return list(range(self.last_dowloaded + 1, self.latest_issue + 1))
+
+    def list_available(self, driver: Driver) -> list:
+        driver.get(self.link)
+        available_issues = self.driver\
+            .find_elements_by_css_selector('table > tr:nth-child(n+3) > a')
+        available = list(map(
+            lambda issue: issue.get_attribute('textContent').strip()
+        ), available_issues)
+        return available
