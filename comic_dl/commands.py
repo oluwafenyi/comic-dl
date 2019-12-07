@@ -26,6 +26,8 @@ class CommandUtility(HandlerMixin):
         group.add_argument('--watched', '-w', action='store_true')
         group.add_argument('--download', '-d', action='store_true')
         group.add_argument('--issues', '-s', action='store_true')
+        group.add_argument('--updates', '-u', action='store_true')
+        group.add_argument('--available', '-e', action='store_true')
 
         download_options = parser.add_mutually_exclusive_group()
         download_options.add_argument('--issue', '-i', type=int)
@@ -38,7 +40,17 @@ class CommandUtility(HandlerMixin):
             self.display_watched()
 
         elif self.args.add:
+            # add query required
             self.add_comic_to_watched()
 
         elif self.args.download:
+            # alias required
+            # issue, range or --all flag required
             self.download()
+
+        elif self.args.updates:
+            self.get_updates()
+
+        elif self.args.available:
+            # alias required
+            self.list_available()
