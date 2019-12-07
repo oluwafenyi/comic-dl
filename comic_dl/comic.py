@@ -81,6 +81,14 @@ class Comic:
             paths.append(path)
         return paths
 
+    def download_all_issues(self, driver: Driver) -> list:
+        paths = []
+        self.get_updates()
+        for issue in range(1, self.latest_issue + 1):
+            path = self.download_issue(issue, driver)
+            paths.append(path)
+        return paths
+
     def get_updates(self, driver: Driver) -> list:
         driver.get(self.link)
         latest_issue = self.driver\

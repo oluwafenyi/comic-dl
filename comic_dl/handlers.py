@@ -73,6 +73,7 @@ class HandlerMixin:
         return path
 
     def download_issues(self, alias, range_, all_):
+        comic = Comic.get_by_alias(alias)
         if not all_:
             try:
                 start, end = map(
@@ -83,12 +84,14 @@ class HandlerMixin:
                     'Range should be of form: "a-b", where a and b are '
                     'integers'
                 )
-            comic = Comic.get_by_alias(alias)
             start, end = sorted([start, end])
             paths = comic.download_issues(start, end, self.driver)
-            print('Comics downloaded to: ')
-            for path in paths:
-                print(path)
+        else:
+            paths = comic.download_all_issues(self.driver)
+
+        print('Comics downloaded to: ')
+        for path in paths:
+            print(path)
         return paths
 
     def get_updates(self):
