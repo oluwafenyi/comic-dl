@@ -7,13 +7,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
+from config import CHROMEDRIVER
+
 
 class Driver(selenium.webdriver.Chrome):
     def __init__(self, **kwargs):
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--window-size=1920x1080")
-        super().__init__(options=options, **kwargs)
+        super().__init__(
+            options=options, executable_path=CHROMEDRIVER, **kwargs
+        )
 
     def _find_with_wait(self, ec, by, value):
         try:

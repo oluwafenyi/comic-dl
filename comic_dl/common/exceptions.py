@@ -13,3 +13,7 @@ class ComicDoesNotExist(Exception):
 
 class AliasNotSpecified(Exception):
     ...
+
+
+class PlatformNotSupported(Exception):
+    ...
