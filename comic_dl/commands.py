@@ -105,7 +105,11 @@ class CommandUtility(HandlerMixin):
                 self.download(alias, self.args.issue)
 
             elif self.args.range or self.args.all:
-                self.download_issues(alias, self.args.range, all=self.args.all)
+                self.download_issues(
+                    alias,
+                    self.args.range,
+                    all_=self.args.all
+                )
 
         elif self.args.updates:
             self.get_updates()

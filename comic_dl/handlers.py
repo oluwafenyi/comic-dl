@@ -76,9 +76,7 @@ class HandlerMixin:
         comic = Comic.get_by_alias(alias)
         if not all_:
             try:
-                start, end = map(
-                    lambda arg: int(arg), self.args.range.split('-')
-                )
+                start, end = map(lambda arg: int(arg), range_.split('-'))
             except ValueError:
                 raise InvalidRangeException(
                     'Range should be of form: "a-b", where a and b are '
