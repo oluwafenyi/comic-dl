@@ -5,8 +5,7 @@ from commands import CommandUtility
 
 
 def main():
-    argv = sys.argv
-    with CommandUtility(argv) as c:
+    with CommandUtility(sys.argv) as c:
         c.execute()
 
 

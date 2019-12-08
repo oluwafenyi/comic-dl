@@ -42,7 +42,7 @@ class Comic:
     def is_alias_unique(cls, alias) -> bool:
         try:
             cls.get_by_alias(alias)
-        except ComicDoesNotExist():
+        except ComicDoesNotExist:
             return True
         return False
 
@@ -91,20 +91,22 @@ class Comic:
 
     def get_updates(self, driver: Driver) -> list:
         driver.get(self.link)
-        latest_issue = self.driver\
-            .find_element_by_css_selector('tr > td > a')\
+        latest_issue = driver\
+            .find_element_by_css_selector('table.listing td a')\
             .get_attribute('textContent').strip()
+        print(latest_issue)
         search_obj = re.search(r'#(\d+)', latest_issue)
         latest_issue = int(search_obj.group(1))
         self.latest_issue = latest_issue
         self.save()
-        return list(range(self.last_dowloaded + 1, self.latest_issue + 1))
+        return list(range(self.last_downloaded + 1, self.latest_issue + 1))
 
     def list_available(self, driver: Driver) -> list:
         driver.get(self.link)
-        available_issues = self.driver\
-            .find_elements_by_css_selector('table > tr:nth-child(n+3) > a')
+        available_issues = driver\
+            .find_elements_by_css_selector('table.listing td a')
         available = list(map(
-            lambda issue: issue.get_attribute('textContent').strip()
-        ), available_issues)
+            lambda issue: issue.get_attribute('textContent').strip(),
+            available_issues
+        ))
         return available
