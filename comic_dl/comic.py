@@ -4,10 +4,10 @@ from typing import Union
 
 from tqdm import tqdm
 
-from db import ComicDB
-from driver import Driver
-from exceptions import ComicDoesNotExist
-from utils import download_page, zip_comic
+from common.db import ComicDB
+from common.driver import Driver
+from common.exceptions import ComicDoesNotExist
+from common.utils import download_page, zip_comic
 
 
 class Comic:

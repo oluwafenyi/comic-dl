@@ -1,9 +1,8 @@
 import argparse
 
-from driver import Driver
+from common.driver import Driver
+from common.exceptions import AliasNotSpecified
 from handlers import HandlerMixin
-
-from exceptions import AliasNotSpecified
 
 
 class CommandUtility(HandlerMixin):
