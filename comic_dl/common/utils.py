@@ -13,6 +13,8 @@ def download_page(entry):
     cd = res.headers.get('content-disposition')
     extension = re.search(r'filename="(.*)"', cd).group(1).split('.')[-1]
     filename = 'page_{}.{}'.format(page_number + 1, extension)
+    if not os.path.exists(TEMP_PATH):
+        os.makedirs(TEMP_PATH)
     path = os.path.join(TEMP_PATH, filename)
     with open(path, 'wb') as img:
         for block in res.iter_content(1024):

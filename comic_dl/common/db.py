@@ -2,11 +2,11 @@ import os
 import sqlite3
 from sqlite3 import IntegrityError
 
-from config import DB_PATH
+from config import ASSETS_PATH
 
 
 class ComicDB():
-    location = DB_PATH
+    location = ASSETS_PATH
     if not os.path.exists(location):
         os.makedirs(location)
 
