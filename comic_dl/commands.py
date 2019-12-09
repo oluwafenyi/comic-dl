@@ -21,47 +21,39 @@ class CommandUtility(HandlerMixin):
         parser = argparse.ArgumentParser()
 
         parser.add_argument(
-            '--alias',
-            '-a',
+            'command',
             type=str,
-            help='-Unique identifier for comics',
+            help="""
+            Command Options:
+                * add: Finds comics based on query and adds your choice to the
+                      database under specified alias.
+
+                * watched: Lists all comics in database along with aliases.
+
+                * download: Downloads comic issues for comic specified by alias
+                      one of -i, -r or --all flags should be specified.
+
+                * issues: Lists available issues for comic specified by alias.
+
+                * updates: lists issues for watched comics that have not been
+                      downloaded.
+                 """,
         )
 
-        group = parser.add_mutually_exclusive_group()
-        group.add_argument(
-            '--add',
+        parser.add_argument(
+            'alias',
+            type=str,
+            help='-Unique identifier for comics',
+            nargs='?'
+        )
+
+        parser.add_argument(
+            '--query',
             '-q',
             action='store',
             type=str,
             help='-Finds comics based on query and adds your choice to'
                  ' database identified by specified alias',
-        )
-        group.add_argument(
-            '--watched',
-            '-w',
-            action='store_true',
-            help='-Lists all comics in database along with alias',
-        )
-        group.add_argument(
-            '--download',
-            '-d',
-            action='store_true',
-            help='-Downloads comic issues for comic specified by alias'
-                 '(-a flag) one of -i, -r, --all flags should be specified',
-        )
-        group.add_argument(
-            '--issues',
-            '-s',
-            action='store_true',
-            help='-Lists available issues for comic specified by '
-                 'alias(-a flag)'
-        )
-        group.add_argument(
-            '--updates',
-            '-u',
-            action='store_true',
-            help='-Lists issues for watched comics that haven\'t been'
-                 ' downloaded',
         )
 
         download_options = parser.add_mutually_exclusive_group()
@@ -89,17 +81,17 @@ class CommandUtility(HandlerMixin):
         self.args = parser.parse_args(self.argv[1:]) \
             if not self.args else self.args
 
-        if self.args.watched:
+        if self.args.command == 'watched':
             self.display_watched()
 
-        elif self.args.add:
-            query = self.args.add
+        elif self.args.command == 'add':
+            query = self.args.query
             self.add_comic_to_watched(query)
 
-        elif self.args.download:
+        elif self.args.command == 'download':
             alias = self.args.alias
             if not alias:
-                raise AliasNotSpecified()
+                raise AliasNotSpecified
 
             if self.args.issue:
                 self.download(alias, self.args.issue)
@@ -111,9 +103,11 @@ class CommandUtility(HandlerMixin):
                     all_=self.args.all
                 )
 
-        elif self.args.updates:
+        elif self.args.command == 'updates':
             self.get_updates()
 
-        elif self.args.issues:
+        elif self.args.command == 'issues':
             alias = self.args.alias
+            if not alias:
+                raise AliasNotSpecified
             self.list_available(alias)

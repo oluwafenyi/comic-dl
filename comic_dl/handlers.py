@@ -77,6 +77,7 @@ class HandlerMixin:
     def download_issues(self, alias, range_, all_):
         comic = Comic.get_by_alias(alias)
         if not all_:
+
             try:
                 start, end = map(lambda arg: int(arg), range_.split('-'))
             except ValueError:
@@ -84,6 +85,7 @@ class HandlerMixin:
                     'Range should be of form: "a-b", where a and b are '
                     'integers'
                 )
+
             start, end = sorted([start, end])
             paths = comic.download_issues(start, end, self.driver)
         else:

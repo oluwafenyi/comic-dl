@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from common.db import ComicDB
 from common.driver import Driver
-from common.exceptions import ComicDoesNotExist, NetworkError
+from common.exceptions import ComicDoesNotExist
 from common.utils import download_page, zip_comic
 
 
@@ -58,8 +58,6 @@ class Comic:
                    params={'quality': 'hq'})
         driver.find_element_by_css_selector('script:nth-child(5)')
         matches = re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
-        if matches is None:
-            raise NetworkError
         entries = list(enumerate(matches))
         img_paths = [path for path in tqdm(
             ThreadPool(8).imap_unordered(download_page, entries),
@@ -93,7 +91,6 @@ class Comic:
         latest_issue = driver\
             .find_element_by_css_selector('table.listing td a')\
             .get_attribute('textContent').strip()
-        print(latest_issue)
         search_obj = re.search(r'#(\d+)', latest_issue)
         latest_issue = int(search_obj.group(1))
         self.latest_issue = latest_issue

@@ -5,15 +5,16 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
+from common.exceptions import NetworkError
 from config import CHROMEDRIVER
 
 
 class Driver(selenium.webdriver.Chrome):
     def __init__(self, **kwargs):
         options = Options()
-        options.add_argument("--headless")
+        # options.add_argument("--headless")
         options.add_argument("--window-size=1920x1080")
         super().__init__(
             options=options, executable_path=CHROMEDRIVER, **kwargs
@@ -25,7 +26,7 @@ class Driver(selenium.webdriver.Chrome):
                 ec((by, value))
             )
         except TimeoutException:
-            raise NoSuchElementException('Timed out and element was not found')
+            raise NetworkError
 
     def get(self, url='https://readcomiconline.to/Search/Comic', params={}):
         query_str = urlencode(params)
