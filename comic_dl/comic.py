@@ -1,12 +1,11 @@
 import re
 from multiprocessing.pool import ThreadPool
-from typing import Union
 
 from tqdm import tqdm
 
 from common.db import ComicDB
 from common.driver import Driver
-from common.exceptions import ComicDoesNotExist
+from common.exceptions import ComicDoesNotExist, NetworkError
 from common.utils import download_page, zip_comic
 
 
@@ -54,13 +53,13 @@ class Comic:
             raise ComicDoesNotExist()
         return Comic(*comic[1:])
 
-    def download_issue(self, issue, driver: Driver) -> Union[str, None]:
+    def download_issue(self, issue, driver: Driver) -> str:
         driver.get('{}/Issue-{}/'.format(self.link, issue),
                    params={'quality': 'hq'})
         driver.find_element_by_css_selector('script:nth-child(5)')
         matches = re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
         if matches is None:
-            return None
+            raise NetworkError
         entries = list(enumerate(matches))
         img_paths = [path for path in tqdm(
             ThreadPool(8).imap_unordered(download_page, entries),

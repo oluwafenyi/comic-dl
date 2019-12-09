@@ -30,9 +30,11 @@ def get_choice(options):
 class HandlerMixin:
     def display_watched(self):
         watched = Comic.list_watched()
-        print('|{:20}      {:<20}|'.format('Comic', 'Alias'))
+        print('|{:20}      {:<20}      {:<20}|'
+              .format('Comic', 'Alias', 'Last Downloaded'))
         for comic in watched:
-            print('|{:20}      {:<20}|'.format(comic.title, comic.alias))
+            print('|{:20}      {:<20}      {:<20}|'
+                  .format(comic.title, comic.alias, comic.last_downloaded))
 
     def add_comic_to_watched(self, query):
         self.driver.get(params={'keyword': query})

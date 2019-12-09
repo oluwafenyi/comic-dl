@@ -24,7 +24,7 @@ class CommandUtility(HandlerMixin):
             '--alias',
             '-a',
             type=str,
-            help='Unique identifier for comics',
+            help='-Unique identifier for comics',
         )
 
         group = parser.add_mutually_exclusive_group()
@@ -33,33 +33,34 @@ class CommandUtility(HandlerMixin):
             '-q',
             action='store',
             type=str,
-            help='Finds comics based on query and adds your choice to database'
-                 ' identified by specified alias',
+            help='-Finds comics based on query and adds your choice to'
+                 ' database identified by specified alias',
         )
         group.add_argument(
             '--watched',
             '-w',
             action='store_true',
-            help='Lists all comics in database along with alias',
+            help='-Lists all comics in database along with alias',
         )
         group.add_argument(
             '--download',
             '-d',
             action='store_true',
-            help='Downloads comic issues for comic specified by alias(-a flag)'
-                 ' one of -i, -r, --all flags should be specified',
+            help='-Downloads comic issues for comic specified by alias'
+                 '(-a flag) one of -i, -r, --all flags should be specified',
         )
         group.add_argument(
             '--issues',
             '-s',
             action='store_true',
-            help='Lists available issues for comic specified by alias(-a flag)'
+            help='-Lists available issues for comic specified by '
+                 'alias(-a flag)'
         )
         group.add_argument(
             '--updates',
             '-u',
             action='store_true',
-            help='Lists issues for watched comics that haven\'t been'
+            help='-Lists issues for watched comics that haven\'t been'
                  ' downloaded',
         )
 
@@ -68,21 +69,21 @@ class CommandUtility(HandlerMixin):
             '--issue',
             '-i',
             type=int,
-            help='Used with the download flag to specify issue to be '
+            help='-Used with the download flag to specify issue to be '
                  'downloaded',
         )
         download_options.add_argument(
             '--range',
             '-r',
             type=str,
-            help='Used to specify an inclusive range of issues to be '
+            help='-Used to specify an inclusive range of issues to be '
                  'downloaded. ex: -r=3-21'
         )
         download_options.add_argument(
             '--all',
             action='store_true',
-            help='Used to specify that all available issues for a comic should'
-                 'be downloaded '
+            help='-Used to specify that all available issues for a comic '
+                 'should be downloaded '
         )
 
         self.args = parser.parse_args(self.argv[1:]) \

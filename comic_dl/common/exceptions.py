@@ -17,3 +17,10 @@ class AliasNotSpecified(Exception):
 
 class PlatformNotSupported(Exception):
     ...
+
+
+class NetworkError(Exception):
+    msg = 'No internet connection available or readcomiconline server down'
+
+    def __init__(self, msg=msg, *args, **kwargs):
+        super().__init__(msg, *args, **kwargs)
