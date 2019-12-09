@@ -97,18 +97,24 @@ class HandlerMixin:
         return paths
 
     def get_updates(self):
+        updates = {}
         for comic in Comic.list_watched():
             unread = comic.get_updates(self.driver)
             if not unread:
                 continue
-            print('Unread Comics for {} -- alias: "{}"'
-                  .format(comic.title, comic.alias))
-            for issue in unread:
-                print('  {} - #{}'.format(comic.title, issue))
+            title = 'Unread Comics for {} -- alias: "{}"'\
+                .format(comic.title, comic.alias)
+            updates[title] = unread
+
+        for title, issues in updates.items():
+            print('{:20}      {:<20}'
+                  .format(title, 'Date Uploaded'))
+            for issue in issues:
+                print('{:20}      {:<20}'.format(issue[0], issue[1]))
 
     def list_available(self, alias):
         comic = Comic.get_by_alias(alias)
         available = comic.list_available(self.driver)
         print('Available comics for {}:'.format(comic.title))
-        for issue in available:
-            print(issue)
+        for issue, date in available:
+            print('{:20}      {:<20}'.format(issue, date))

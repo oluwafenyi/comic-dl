@@ -9,7 +9,6 @@ def main():
         c.execute()
 
 # todo: get download sizes
-# todo: display date uploaded on comics
 
 
 if __name__ == '__main__':

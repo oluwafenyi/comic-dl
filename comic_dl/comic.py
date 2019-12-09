@@ -87,22 +87,38 @@ class Comic:
         return paths
 
     def get_updates(self, driver: Driver) -> list:
-        driver.get(self.link)
-        latest_issue = driver\
-            .find_element_by_css_selector('table.listing td a')\
-            .get_attribute('textContent').strip()
-        search_obj = re.search(r'#(\d+)', latest_issue)
-        latest_issue = int(search_obj.group(1))
+        available = self.list_available(driver)
+
+        def issue_num(title):
+            match = re.search(r'#(\d+)', title)
+            if match:
+                return int(match.group(1))
+            return False
+
+        last_read = list(filter(
+            lambda i: issue_num(i[0]) == self.last_downloaded,
+            available
+        ))[0]
+
+        idx = available.index(last_read)
+        updates = available[:idx]
+
+        latest_issue = issue_num(available[0][0])
         self.latest_issue = latest_issue
         self.save()
-        return list(range(self.last_downloaded + 1, self.latest_issue + 1))
+
+        return updates
 
     def list_available(self, driver: Driver) -> list:
         driver.get(self.link)
         available_issues = driver\
             .find_elements_by_css_selector('table.listing td a')
-        available = list(map(
-            lambda issue: issue.get_attribute('textContent').strip(),
-            available_issues
-        ))
+        available =\
+            [issue.get_attribute('textContent').strip()
+                for issue in available_issues]
+        dates = driver.\
+            find_elements_by_css_selector('table.listing tr td:nth-child(2)')
+        dates = [date.get_attribute('textContent').strip() for date in dates]
+
+        available = list(zip(available, dates))
         return available

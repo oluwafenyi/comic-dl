@@ -27,17 +27,17 @@ class CommandUtility(HandlerMixin):
             type=str,
             help="""
             Command Options:
-                * add: Finds comics based on query and adds your choice to the
+            * add: Finds comics based on query and adds your choice to the
                       database under specified alias.
 
-                * watched: Lists all comics in database along with aliases.
+            * watched: Lists all comics in database along with aliases.
 
-                * download: Downloads comic issues for comic specified by alias
+            * download: Downloads comic issues for comic specified by alias
                       one of -i, -r or --all flags should be specified.
 
-                * issues: Lists available issues for comic specified by alias.
+            * issues: Lists available issues for comic specified by alias.
 
-                * updates: lists issues for watched comics that have not been
+            * updates: lists issues for watched comics that have not been
                       downloaded.
                  """,
         )
@@ -120,3 +120,6 @@ class CommandUtility(HandlerMixin):
                 raise AliasNotSpecified
             self.driver = Driver()
             self.list_available(alias)
+
+        else:
+            parser.print_help()
