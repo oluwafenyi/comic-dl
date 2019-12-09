@@ -11,12 +11,19 @@ class ComicDoesNotExist(Exception):
         super().__init__(msg, *args, **kwargs)
 
 
-class AliasNotSpecified(Exception):
-    ...
-
-
 class PlatformNotSupported(Exception):
     ...
+
+
+class ArgumentNotSpecified(Exception):
+    ...
+
+
+class AliasNotSpecified(ArgumentNotSpecified):
+    msg = 'Positional argument alias not specified'
+
+    def __init__(self, msg=msg, *args, **kwargs):
+        super().__init__(msg, *args, **kwargs)
 
 
 class NetworkError(Exception):

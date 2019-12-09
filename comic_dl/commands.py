@@ -1,7 +1,7 @@
 import argparse
 
 from common.driver import Driver
-from common.exceptions import AliasNotSpecified
+from common.exceptions import ArgumentNotSpecified, AliasNotSpecified
 from handlers import HandlerMixin
 
 
@@ -9,13 +9,15 @@ class CommandUtility(HandlerMixin):
     def __init__(self, argv, args=None):
         self.argv = argv
         self.args = args
-        self.driver = Driver()
 
     def __enter__(self):
         return self
 
     def __exit__(self, ext_type, exc_value, traceback):
-        self.driver.quit()
+        try:
+            self.driver.quit()
+        except AttributeError:
+            pass
 
     def execute(self):
         parser = argparse.ArgumentParser()
@@ -86,12 +88,17 @@ class CommandUtility(HandlerMixin):
 
         elif self.args.command == 'add':
             query = self.args.query
+            if not query:
+                raise ArgumentNotSpecified('-q="<query>" flag is compulsory'
+                                           ' for this command')
+            self.driver = Driver()
             self.add_comic_to_watched(query)
 
         elif self.args.command == 'download':
             alias = self.args.alias
             if not alias:
                 raise AliasNotSpecified
+            self.driver = Driver()
 
             if self.args.issue:
                 self.download(alias, self.args.issue)
@@ -104,10 +111,12 @@ class CommandUtility(HandlerMixin):
                 )
 
         elif self.args.command == 'updates':
+            self.driver = Driver()
             self.get_updates()
 
         elif self.args.command == 'issues':
             alias = self.args.alias
             if not alias:
                 raise AliasNotSpecified
+            self.driver = Driver()
             self.list_available(alias)

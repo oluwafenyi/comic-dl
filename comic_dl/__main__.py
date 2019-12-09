@@ -9,7 +9,6 @@ def main():
         c.execute()
 
 # todo: get download sizes
-# todo : stop initializing driver when not needed
 # todo: display date uploaded on comics
 
 
