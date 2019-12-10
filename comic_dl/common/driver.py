@@ -21,7 +21,7 @@ class Driver(selenium.webdriver.Chrome):
         super().__init__(
             options=options, executable_path=CHROMEDRIVER, **kwargs
         )
-        print('Gathering results...\n\n')
+        print('Gathering results...\n')
 
     def _find_with_wait(self, ec, by, value):
         try:

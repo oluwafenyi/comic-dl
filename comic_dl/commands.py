@@ -101,7 +101,7 @@ class CommandUtility(HandlerMixin):
             self.driver = Driver()
 
             if self.args.issue:
-                self.download(alias, self.args.issue)
+                self.download_issue(alias, self.args.issue)
 
             elif self.args.range or self.args.all:
                 self.download_issues(

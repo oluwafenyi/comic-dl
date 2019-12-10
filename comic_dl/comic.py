@@ -6,7 +6,7 @@ from tqdm import tqdm
 from common.db import ComicDB
 from common.driver import Driver
 from common.exceptions import ComicDoesNotExist
-from common.utils import download_page, zip_comic
+from common.utils import download_page, zip_comic, get_size, download_prompt
 
 
 class Comic:
@@ -53,11 +53,24 @@ class Comic:
             raise ComicDoesNotExist()
         return Comic(*comic[1:])
 
-    def download_issue(self, issue, driver: Driver) -> str:
+    def get_image_links(self, driver: Driver, issue):
         driver.get('{}/Issue-{}/'.format(self.link, issue),
                    params={'quality': 'hq'})
         driver.find_element_by_css_selector('script:nth-child(5)')
         matches = re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
+        for match in matches:
+            yield match
+
+    def download_issue(self, driver: Driver, issue, many=False) -> str:
+        matches = self.get_image_links(driver, issue)
+
+        if not many:
+            size = sum(size for size in
+                       ThreadPool(8).imap_unordered(get_size, matches))
+            prompt = download_prompt(size)
+            if prompt.lower() != 'y':
+                return
+
         entries = list(enumerate(matches))
         img_paths = [path for path in tqdm(
             ThreadPool(8).imap_unordered(download_page, entries),
@@ -71,18 +84,24 @@ class Comic:
         self.save()
         return path
 
-    def download_issues(self, start, end, driver: Driver) -> list:
-        paths = []
-        for issue in range(start, end + 1):
-            path = self.download_issue(issue, driver)
-            paths.append(path)
-        return paths
+    def download_issues(self, driver: Driver, start=1, end='last') -> list:
+        if end == 'last':
+            end = self.latest_issue
 
-    def download_all_issues(self, driver: Driver) -> list:
         paths = []
-        self.get_updates()
-        for issue in range(1, self.latest_issue + 1):
-            path = self.download_issue(issue, driver)
+        total = 0
+        for issue in range(start, end + 1):
+            links = self.get_image_links(driver, issue)
+            size = sum(size for size in
+                       ThreadPool(8).imap_unordered(get_size, links))
+            total += size
+
+        prompt = download_prompt(total)
+        if prompt.lower() != 'y':
+            return
+
+        for issue in range(start, end + 1):
+            path = self.download_issue(driver, issue, many=True)
             paths.append(path)
         return paths
 

@@ -8,7 +8,7 @@ def main():
     with CommandUtility(sys.argv) as c:
         c.execute()
 
-# todo: get download sizes
+# todo: comment code
 
 
 if __name__ == '__main__':

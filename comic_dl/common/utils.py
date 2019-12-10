@@ -9,6 +9,27 @@ import config
 from common.exceptions import PlatformNotSupported
 
 
+def format_size(size):
+    power = 2**10
+    n = 0
+    power_labels = {0: '', 1: 'k', 2: 'm', 3: 'g', 4: 't'}
+    while size > power:
+        size /= power
+        n += 1
+    return ''.join([str(round(size, 2)), power_labels[n]+'b'])
+
+
+def get_size(url):
+    size = requests.head(url).headers['Content-Length']
+    return int(size)
+
+
+def download_prompt(size):
+    prompt = input('Total size is {}, Download? [y/N]: '
+                   .format(format_size(size)))
+    return prompt
+
+
 def download_page(entry):
     page_number, uri = entry
     res = requests.get(uri)
