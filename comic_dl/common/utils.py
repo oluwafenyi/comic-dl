@@ -21,7 +21,7 @@ def format_size(size):
 
 def get_size(url):
     size = requests.head(url).headers['Content-Length']
-    return url, int(size)
+    return int(size)
 
 
 def download_prompt(size):
