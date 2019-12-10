@@ -2,17 +2,17 @@ import os
 import sqlite3
 from sqlite3 import IntegrityError
 
-from config import ASSETS_PATH
+import config
 
 
 class ComicDB():
-    location = ASSETS_PATH
+    location = config.ASSETS_PATH
     if not os.path.exists(location):
         os.makedirs(location)
 
     def __init__(self):
         self.conn = sqlite3.connect(
-            os.path.join(self.__class__.location, 'comic.db')
+            os.path.join(self.__class__.location, config.__dbName__)
         )
         self.cursor = self.conn.cursor()
 

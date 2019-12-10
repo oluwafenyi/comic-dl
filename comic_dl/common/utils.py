@@ -16,7 +16,7 @@ def format_size(size):
     while size > power:
         size /= power
         n += 1
-    return ''.join([str(round(size, 2)), power_labels[n]+'b'])
+    return ''.join([str(round(size, 2)), power_labels[n] + 'b'])
 
 
 def get_size(url):
@@ -60,6 +60,7 @@ def zip_comic(comic_title, archive_name, images):
 
 
 def get_chrome_driver(platform):
+    print('Downloading chromedriver, please wait...')
     latest_version = requests\
         .get('https://chromedriver.storage.googleapis.com/LATEST_RELEASE').text
 
@@ -83,15 +84,19 @@ def get_chrome_driver(platform):
     res = requests.get(url)
     path = os.path.join(config.ASSETS_PATH, chromedriver)
 
-    with open(path, 'wb') as f:
-        for block in res.iter_content(1024):
-            f.write(block)
+    try:
+        with open(path, 'wb') as f:
+            for block in res.iter_content(1024):
+                f.write(block)
 
-    with zipfile.ZipFile(path, 'r') as zf:
-        zf.extractall(config.ASSETS_PATH)
+        with zipfile.ZipFile(path, 'r') as zf:
+            zf.extractall(config.ASSETS_PATH)
 
-    os.remove(path)
+        os.remove(path)
 
-    if platform in ['linux', 'linux2', 'darwin']:
-        st = os.stat(config.CHROMEDRIVER)
-        os.chmod(config.CHROMEDRIVER, st.st_mode | stat.S_IEXEC)
+        if platform in ['linux', 'linux2', 'darwin']:
+            st = os.stat(config.CHROMEDRIVER)
+            os.chmod(config.CHROMEDRIVER, st.st_mode | stat.S_IEXEC)
+    except:
+        if os.path.exists(path):
+            os.remove(path)

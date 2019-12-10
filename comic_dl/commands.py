@@ -1,6 +1,7 @@
 import argparse
 
 from common.driver import Driver
+from config import __version__
 from common.exceptions import ArgumentNotSpecified, AliasNotSpecified
 from handlers import HandlerMixin
 
@@ -21,6 +22,13 @@ class CommandUtility(HandlerMixin):
 
     def execute(self):
         parser = argparse.ArgumentParser()
+
+        parser.add_argument(
+            '-v',
+            '--version',
+            action='version',
+            version='%(prog)s {version}'.format(version=__version__)
+        )
 
         parser.add_argument(
             'command',
