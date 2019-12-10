@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from common.db import ComicDB
 from common.driver import Driver
-from common.exceptions import ComicDoesNotExist
+from common.exceptions import ComicDoesNotExist, NetworkError
 from common.utils import download_page, zip_comic, get_size, download_prompt
 
 
@@ -58,20 +58,23 @@ class Comic:
                    params={'quality': 'hq'})
         driver.find_element_by_css_selector('script:nth-child(5)')
         matches = re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
-        for match in matches:
-            yield match
+        if matches:
+            for match in matches:
+                yield match
+        else:
+            raise NetworkError
 
     def download_issue(self, driver: Driver, issue, many=False) -> str:
-        matches = self.get_image_links(driver, issue)
+        links = [link for link in self.get_image_links(driver, issue)]
 
         if not many:
             size = sum(size for size in
-                       ThreadPool(8).imap_unordered(get_size, matches))
+                       ThreadPool(8).imap_unordered(get_size, links))
             prompt = download_prompt(size)
             if prompt.lower() != 'y':
                 return
 
-        entries = list(enumerate(matches))
+        entries = list(enumerate(links))
         img_paths = [path for path in tqdm(
             ThreadPool(8).imap_unordered(download_page, entries),
             desc='{} - #{}'.format(self.title, issue),
@@ -88,18 +91,12 @@ class Comic:
         if end == 'last':
             end = self.latest_issue
 
-        paths = []
-        total = 0
-        for issue in range(start, end + 1):
-            links = self.get_image_links(driver, issue)
-            size = sum(size for size in
-                       ThreadPool(8).imap_unordered(get_size, links))
-            total += size
-
-        prompt = download_prompt(total)
+        prompt = input('Can\'t precalculate the size of your download, '
+                       'are you sure you want to do this? [y/N]: ')
         if prompt.lower() != 'y':
             return
 
+        paths = []
         for issue in range(start, end + 1):
             path = self.download_issue(driver, issue, many=True)
             paths.append(path)
