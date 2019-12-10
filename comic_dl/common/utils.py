@@ -55,6 +55,7 @@ def zip_comic(comic_title, archive_name, images):
         for img in images:
             zf.write(img, compress_type=zipfile.ZIP_STORED)
             os.remove(img)
+    print('Done')
     return path
 
 

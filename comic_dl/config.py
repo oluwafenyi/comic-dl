@@ -11,6 +11,9 @@ BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 ASSETS_PATH = os.path.join(BASE_PATH, 'assets')
 
 TEMP_PATH = os.path.join(BASE_PATH, 'temp')
+if os.path.exists(TEMP_PATH):
+    for f in os.listdir(TEMP_PATH):
+        os.remove(os.path.join(TEMP_PATH, f))
 
 ARCHIVE_PATH = os.path.join(BASE_PATH, 'archives')
 
