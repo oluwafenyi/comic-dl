@@ -5,8 +5,8 @@ import zipfile
 
 import requests
 
-import config
-from common.exceptions import PlatformNotSupported
+from .. import config
+from .exceptions import PlatformNotSupported
 
 
 def format_size(size):

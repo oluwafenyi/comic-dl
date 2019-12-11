@@ -1,6 +1,6 @@
 
-from comic import Comic
-from common.exceptions import InvalidRangeException
+from .comic import Comic
+from .common.exceptions import InvalidRangeException
 
 
 def set_alias(title):
