@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 
 
 setup(
-    name='comic-dl',
+    name='comicdl',
     version=__version__,
     description='A cli comic downloader.',
     url='http://github.com/oluwafenyi/comic-dl/',

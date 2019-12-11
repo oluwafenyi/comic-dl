@@ -6,6 +6,9 @@
     - Google Chrome
     - >=python3.5
 
+### installation
+    `pip3 install comicdl`
+
 ### commands
 
 - `comic-dl add -q="<query>"`
