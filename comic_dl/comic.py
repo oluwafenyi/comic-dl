@@ -3,10 +3,12 @@ from multiprocessing.pool import ThreadPool
 
 from tqdm import tqdm
 
-from common.db import ComicDB
-from common.driver import Driver
-from common.exceptions import ComicDoesNotExist, NetworkError
-from common.utils import download_page, zip_comic, get_size, download_prompt
+from .common.db import ComicDB
+from .common.driver import Driver
+from .common.exceptions import ComicDoesNotExist, NetworkError
+from .common.utils import (
+    download_page, zip_comic, get_size, download_prompt
+)
 
 
 class Comic:

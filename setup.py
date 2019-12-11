@@ -1,5 +1,5 @@
-from setuptools import setup
-from comic_dl import config
+from setuptools import setup, find_packages
+from comic_dl import __version__
 
 
 with open('requirements.txt') as f:
@@ -8,19 +8,21 @@ with open('requirements.txt') as f:
 
 setup(
     name='comic-dl',
-    version=config.__version__,
+    version=__version__,
     description='A cli comic downloader.',
     url='http://github.com/oluwafenyi/comic-dl/',
     author='oluwafenyi',
+    author_email='o.enyioma@gmail.com',
     license='MIT',
-    package_name=['comic_dl'],
     zip_safe=False,
+    include_package_data=True,
+    packages=find_packages(),
     install_requires=requirements,
     keywords='comics comic download',
     python_requires='>3.5',
     entry_points={
-        'console-scripts': [
-            'comic_dl = comic_dl.__main__:main'
+        'console_scripts': [
+            'comic-dl = comic_dl.commands:execute_from_command_line'
         ]
     },
     classifiers=[

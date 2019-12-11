@@ -1,9 +1,10 @@
 import argparse
+import sys
 
-from common.driver import Driver
-from config import __version__
-from common.exceptions import ArgumentNotSpecified, AliasNotSpecified
-from handlers import HandlerMixin
+from .common.driver import Driver
+from . import __version__
+from .common.exceptions import ArgumentNotSpecified, AliasNotSpecified
+from .handlers import HandlerMixin
 
 
 class CommandUtility(HandlerMixin):
@@ -131,3 +132,8 @@ class CommandUtility(HandlerMixin):
 
         else:
             parser.print_help()
+
+
+def execute_from_command_line():
+    with CommandUtility(sys.argv) as c:
+        c.execute()

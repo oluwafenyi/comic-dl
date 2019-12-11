@@ -7,3 +7,6 @@ temp/
 assets/
 .vscode/
 archives/
+build/
+*.egg-info/
+dist/

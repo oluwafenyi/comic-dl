@@ -3,10 +3,9 @@ import sys
 import tempfile
 import appdirs
 
-from common.utils import get_chrome_driver
+from .common.utils import get_chrome_driver
 
 
-__version__ = '0.0.1'
 __dbName__ = 'comic.db'
 platform = sys.platform
 
