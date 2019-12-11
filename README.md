@@ -2,6 +2,10 @@
 
 ### A command line based comic book downloader
 
+### requirements
+    - Google Chrome
+    - >=python3.5
+
 ### commands
 
 - `comic-dl add -q="<query>"`
