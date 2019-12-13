@@ -27,7 +27,7 @@ class AliasNotSpecified(ArgumentNotSpecified):
 
 
 class NetworkError(Exception):
-    msg = 'No internet connection available or readcomiconline server down'
+    msg = 'No internet connection available or page not found.'
 
     def __init__(self, msg=msg, *args, **kwargs):
         super().__init__(msg, *args, **kwargs)

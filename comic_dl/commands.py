@@ -58,13 +58,24 @@ class CommandUtility(HandlerMixin):
             nargs='?'
         )
 
-        parser.add_argument(
+        add_options = parser.add_mutually_exclusive_group()
+
+        add_options.add_argument(
             '--query',
             '-q',
             action='store',
             type=str,
             help='-Finds comics based on query and adds your choice to'
                  ' database identified by specified alias',
+        )
+
+        add_options.add_argument(
+            '--link',
+            '-l',
+            action='store',
+            type=str,
+            help='-Adds valid links for comic series from readcomiconline.to '
+                 'to watch list'
         )
 
         download_options = parser.add_mutually_exclusive_group()
@@ -97,11 +108,15 @@ class CommandUtility(HandlerMixin):
 
         elif self.args.command == 'add':
             query = self.args.query
-            if not query:
-                raise ArgumentNotSpecified('-q="<query>" flag is compulsory'
-                                           ' for this command')
-            self.driver = Driver()
-            self.add_comic_to_watched(query)
+            link = self.args.link
+            if query:
+                self.add_comic_to_watched(query)
+
+            elif link:
+                self.watch_link(link)
+
+            else:
+                raise ArgumentNotSpecified('-q or -l argument expected')
 
         elif self.args.command == 'download':
             alias = self.args.alias

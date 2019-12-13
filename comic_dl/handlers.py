@@ -1,6 +1,7 @@
 
 from .comic import Comic
 from .common.exceptions import InvalidRangeException
+from .common.utils import get_issue_num
 
 
 def set_alias(title):
@@ -68,6 +69,20 @@ class HandlerMixin:
             else:
                 print('That is not a valid option. Try again.')
 
+    def watch_link(self, link):
+        self.driver.get(link)
+        title = self.driver.find_element_by_css_selector('.bigChar')\
+            .get_attribute('textContent').strip()
+        latest_issue = self.driver.find_element_by_css_selector('tr > td > a')\
+            .get_attribute('textContent').strip()
+        latest_issue = get_issue_num(latest_issue)
+        alias = ''
+        while not alias:
+            alias = set_alias(title)
+        comic = Comic(title, link, alias, latest_issue=latest_issue)
+        comic.save()
+        print('Added "{}" to list of watched comics under...'.format(title))
+
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
         path = comic.download_issue(self.driver, self.args.issue)
@@ -109,6 +124,8 @@ class HandlerMixin:
             updates[title] = unread
 
         for title, issues in updates.items():
+            if not issues:
+                continue
             print('{:20}      {:<20}'
                   .format(title, 'Date Uploaded'))
             for issue in issues:

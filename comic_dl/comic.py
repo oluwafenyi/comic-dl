@@ -7,7 +7,7 @@ from .common.db import ComicDB
 from .common.driver import Driver
 from .common.exceptions import ComicDoesNotExist, NetworkError
 from .common.utils import (
-    download_page, zip_comic, get_size, download_prompt
+    download_page, zip_comic, get_size, download_prompt, get_issue_num
 )
 
 
@@ -107,21 +107,15 @@ class Comic:
     def get_updates(self, driver: Driver) -> list:
         available = self.list_available(driver)
 
-        def issue_num(title):
-            match = re.search(r'#(\d+)', title)
-            if match:
-                return int(match.group(1))
-            return False
-
         last_read = list(filter(
-            lambda i: issue_num(i[0]) == self.last_downloaded,
+            lambda i: get_issue_num(i[0]) == self.last_downloaded,
             available
         ))[0]
 
         idx = available.index(last_read)
         updates = available[:idx]
 
-        latest_issue = issue_num(available[0][0])
+        latest_issue = get_issue_num(available[0][0])
         self.latest_issue = latest_issue
         self.save()
 

@@ -9,6 +9,13 @@ from .. import config
 from .exceptions import PlatformNotSupported
 
 
+def get_issue_num(text):
+    match = re.search(r'#(\d+)', text)
+    if match:
+        return int(match.group(1))
+    return False
+
+
 def format_size(size):
     power = 2**10
     n = 0
