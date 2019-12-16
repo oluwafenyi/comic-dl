@@ -1,5 +1,6 @@
 
 from core.comic import Comic
+from core.downloader import ComicDownloader
 from utils.exceptions import InvalidRangeException
 from utils.helpers import get_issue_num
 
@@ -85,13 +86,15 @@ class HandlerMixin:
 
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
-        path = comic.download_issue(self.driver, self.args.issue)
+        cd = ComicDownloader(comic)
+        path = cd.download_issue(self.driver, issue)
         if path:
             print('Comic downloaded to {}'.format(path))
         return path
 
     def download_issues(self, alias, range_, all_):
         comic = Comic.get_by_alias(alias)
+        cd = ComicDownloader(comic)
         if not all_:
 
             try:
@@ -103,9 +106,9 @@ class HandlerMixin:
                 )
 
             start, end = sorted([start, end])
-            paths = comic.download_issues(self.driver, start, end)
+            paths = cd.download_issues(self.driver, start, end)
         else:
-            paths = comic.download_issues(self.driver)
+            paths = cd.download_issues(self.driver)
 
         if paths:
             print('Comics downloaded to: ')
