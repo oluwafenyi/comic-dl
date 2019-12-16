@@ -16,7 +16,7 @@ class Driver(selenium.webdriver.Chrome):
         prefs = {"profile.managed_default_content_settings.images": 2}
         options = Options()
         options.add_experimental_option('prefs', prefs)
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
         options.add_argument("--window-size=1920x1080")
         super().__init__(
             options=options, executable_path=CHROMEDRIVER, **kwargs
