@@ -87,10 +87,16 @@ class HandlerMixin:
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
         cd = ComicDownloader(comic)
-        path = cd.download_issue(self.driver, issue)
+        path = cd.download_issue(self.driver, issue=issue)
         if path:
             print('Comic downloaded to {}'.format(path))
-        return path
+
+    def download_annual(self, alias, annual):
+        comic = Comic.get_by_alias(alias)
+        cd = ComicDownloader(comic)
+        path = cd.download_issue(self.driver, annual=annual)
+        if path:
+            print('Comic downloaded to {}'.format(path))
 
     def download_issues(self, alias, range_, all_):
         comic = Comic.get_by_alias(alias)
@@ -114,7 +120,6 @@ class HandlerMixin:
             print('Comics downloaded to: ')
             for path in paths:
                 print(path)
-            return paths
 
     def get_updates(self):
         updates = {}

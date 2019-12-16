@@ -13,7 +13,7 @@ def get_issue_num(text):
     match = re.search(r'#(\d+)', text)
     if match:
         return int(match.group(1))
-    return False
+    return None
 
 
 def get_annual_num(text):

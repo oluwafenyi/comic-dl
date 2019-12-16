@@ -87,6 +87,13 @@ class CommandUtility(HandlerMixin):
                  'downloaded',
         )
         download_options.add_argument(
+            '--annual',
+            '-a',
+            type=int,
+            help='Used with the download flag to specify annual to be '
+                 'downloaded'
+        )
+        download_options.add_argument(
             '--range',
             '-r',
             type=str,
@@ -126,6 +133,9 @@ class CommandUtility(HandlerMixin):
 
             if self.args.issue:
                 self.download_issue(alias, self.args.issue)
+
+            elif self.args.annual:
+                self.download_annual(alias, self.args.annual)
 
             elif self.args.range or self.args.all:
                 self.download_issues(
