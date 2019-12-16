@@ -1,7 +1,7 @@
 
-from .comic import Comic
-from .common.exceptions import InvalidRangeException
-from .common.utils import get_issue_num
+from core.comic import Comic
+from utils.exceptions import InvalidRangeException
+from utils.helpers import get_issue_num
 
 
 def set_alias(title):

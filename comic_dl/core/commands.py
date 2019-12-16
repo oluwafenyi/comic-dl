@@ -1,10 +1,10 @@
 import argparse
 import sys
 
-from .common.driver import Driver
 from . import __version__
-from .common.exceptions import ArgumentNotSpecified, AliasNotSpecified
-from .handlers import HandlerMixin
+from core.handlers import HandlerMixin
+from utils.driver import Driver
+from utils.exceptions import ArgumentNotSpecified, AliasNotSpecified
 
 
 class CommandUtility(HandlerMixin):

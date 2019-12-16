@@ -1,12 +1,13 @@
 import re
 from multiprocessing.pool import ThreadPool
+import time
 
 from tqdm import tqdm
 
-from .common.db import ComicDB
-from .common.driver import Driver
-from .common.exceptions import ComicDoesNotExist, NetworkError
-from .common.utils import (
+from utils.db import ComicDB
+from utils.driver import Driver
+from utils.exceptions import ComicDoesNotExist, NetworkError
+from utils.helpers import (
     download_page, zip_comic, get_size, download_prompt, get_issue_num
 )
 
@@ -99,7 +100,11 @@ class Comic:
             return
 
         paths = []
-        for issue in range(start, end + 1):
+        for i, issue in enumerate(range(start, end + 1)):
+            if i % 30 == 0 and i != 0:
+                print('Pausing for a bit to bypass rate limiting.')
+                time.sleep(20)
+                print('Resumed')
             path = self.download_issue(driver, issue, many=True)
             paths.append(path)
         return paths

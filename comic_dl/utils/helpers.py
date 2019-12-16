@@ -5,8 +5,8 @@ import zipfile
 
 import requests
 
-from .. import config
-from .exceptions import PlatformNotSupported
+from core import config
+from utils.exceptions import PlatformNotSupported
 
 
 def get_issue_num(text):
