@@ -1,10 +1,16 @@
 import argparse
+import logging
 import sys
+
+from selenium.webdriver.remote.remote_connection import LOGGER
 
 from . import __version__
 from core.handlers import HandlerMixin
 from utils.driver import Driver
 from utils.exceptions import ArgumentNotSpecified, AliasNotSpecified
+
+
+LOGGER.setLevel(logging.WARNING)
 
 
 class CommandUtility(HandlerMixin):
