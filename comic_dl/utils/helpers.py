@@ -16,6 +16,13 @@ def get_issue_num(text):
     return False
 
 
+def get_annual_num(text):
+    match = re.search(r'Annual (\d+)', text)
+    if match:
+        return int(match.group(1))
+    return None
+
+
 def format_size(size):
     power = 2**10
     n = 0

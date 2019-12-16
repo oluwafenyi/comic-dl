@@ -1,15 +1,9 @@
-import re
-from multiprocessing.pool import ThreadPool
-import time
-
-from tqdm import tqdm
 
 from utils.db import ComicDB
 from utils.driver import Driver
-from utils.exceptions import ComicDoesNotExist, NetworkError
-from utils.helpers import (
-    download_page, zip_comic, get_size, download_prompt, get_issue_num
-)
+from utils.exceptions import ComicDoesNotExist
+
+from utils.helpers import get_issue_num, get_annual_num
 
 
 class Comic:
@@ -56,79 +50,25 @@ class Comic:
             raise ComicDoesNotExist()
         return Comic(*comic[1:])
 
-    def get_issues(self, driver: Driver):
+    def _get_listing(self, driver: Driver):
         driver.get(self.link)
-        issues = driver.find_elements_by_css_selector('table.listing td a')
+        return driver.find_elements_by_css_selector('table.listing td a')
+
+    def get_issues(self, driver: Driver):
+        listing = self._get_listing(driver)
+        issues = list(filter(
+            lambda e: get_issue_num(e.get_attribute('textContent')),
+            listing
+        ))
         return issues
 
-    def get_image_links(self, driver: Driver, issue):
-        driver.get('{}/Issue-{}/'.format(self.link, issue),
-                   params={'quality': 'hq'})
-        driver.find_element_by_css_selector('script:nth-child(5)')
-        matches = re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
-        if matches:
-            for match in matches:
-                yield match
-        else:
-            # Failsafe in case the issue path is not the expected path
-            # Came across an issue with path /Issue-32-2/ instead of /Issue-32/
-            issues = self.get_issues(driver)
-            titles =\
-                [get_issue_num(issue.get_attribute('textContent').strip())
-                    for issue in issues]
-            try:
-                index = titles.index(int(issue))
-            except ValueError:
-                raise NetworkError
-            link = issues[index].get_attribute('href')
-            driver.get(link, params={'quality': 'hq'})
-            driver.find_element_by_css_selector('script:nth-child(5)')
-            matches =\
-                re.findall(r'lstImages.push\("(.*)"\)', driver.page_source)
-            for match in matches:
-                yield match
-
-    def download_issue(self, driver: Driver, issue, many=False) -> str:
-        links = [link for link in self.get_image_links(driver, issue)]
-
-        if not many:
-            size = sum(size for size in
-                       ThreadPool(8).imap_unordered(get_size, links))
-            prompt = download_prompt(size)
-            if prompt.lower() != 'y':
-                return
-
-        entries = list(enumerate(links))
-        img_paths = [path for path in tqdm(
-            ThreadPool(8).imap_unordered(download_page, entries),
-            desc='{} - #{}'.format(self.title, issue),
-            total=len(entries),
-        )]
-        archive_name = '{} - #{}.cbz'.format(self.title, issue)
-        path = zip_comic(self.title, archive_name, img_paths)
-        self.last_downloaded = issue if issue > self.last_downloaded\
-            else self.last_downloaded
-        self.save()
-        return path
-
-    def download_issues(self, driver: Driver, start=1, end='last') -> list:
-        if end == 'last':
-            end = self.latest_issue
-
-        prompt = input('Can\'t precalculate the size of your download, '
-                       'are you sure you want to do this? [y/N]: ')
-        if prompt.lower() != 'y':
-            return
-
-        paths = []
-        for i, issue in enumerate(range(start, end + 1)):
-            if i % 30 == 0 and i != 0:
-                print('Pausing for a bit to bypass rate limiting.')
-                time.sleep(20)
-                print('Resumed')
-            path = self.download_issue(driver, issue, many=True)
-            paths.append(path)
-        return paths
+    def get_annuals(self, driver: Driver):
+        listing = self._get_listing(driver)
+        annuals = list(filter(
+            lambda e: get_annual_num(e.get_attribute('textContent')),
+            listing
+        ))
+        return annuals
 
     def get_updates(self, driver: Driver) -> list:
         available = self.list_available(driver)
@@ -148,7 +88,7 @@ class Comic:
         return updates
 
     def list_available(self, driver: Driver) -> list:
-        available_issues = self.get_issues(driver)
+        available_issues = self._get_listing(driver)
         available =\
             [issue.get_attribute('textContent').strip()
                 for issue in available_issues]
