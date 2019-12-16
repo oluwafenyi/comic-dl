@@ -22,10 +22,10 @@ class ComicDownloader:
         self.comic = comic
 
     def get_image_links(self, driver: Driver, issue=None, annual=None):
-        if issue:
+        if issue is not None:
             link = '{}/Issue-{}/'.format(self.comic.link, issue)
-        elif annual:
-            link = '{}/Annual-{}/'.format(self.comic.link, issue)
+        elif annual is not None:
+            link = '{}/Annual-{}/'.format(self.comic.link, annual)
         driver.get(link, params={'quality': 'hq'})
         matches = self._image_links(driver)
         if matches:
@@ -34,7 +34,7 @@ class ComicDownloader:
         else:
             # Failsafe in case the issue path is not the expected path
             # Came across an issue with path /Issue-32-2/ instead of /Issue-32/
-            if issue:
+            if issue is not None:
                 issues = self.comic.get_issues(driver)
                 titles =\
                     [get_issue_num(issue.get_attribute('textContent'))
@@ -44,7 +44,7 @@ class ComicDownloader:
                 except ValueError:
                     raise NetworkError
                 link = issues[index].get_attribute('href')
-            elif annual:
+            elif annual is not None:
                 annuals = self.comic.get_annuals(driver)
                 titles =\
                     [get_annual_num(annual.get_attribute('textContent'))
@@ -88,7 +88,7 @@ class ComicDownloader:
         )]
         archive_name = '{}.cbz'.format(desc)
         path = zip_comic(self.comic.title, archive_name, img_paths)
-        if issue:
+        if issue is not None:
             self.comic.last_downloaded = issue if issue >\
                 self.comic.last_downloaded else self.comic.last_downloaded
         self.comic.save()
