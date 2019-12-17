@@ -114,6 +114,7 @@ class HandlerMixin:
             start, end = sorted([start, end])
             paths = cd.download_issues(self.driver, start, end)
         else:
+            comic.get_updates(self.driver)
             paths = cd.download_issues(self.driver)
 
         if paths:

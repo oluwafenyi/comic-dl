@@ -1,13 +1,12 @@
 # comic-dl
-
-### A command line based comic book downloader
+    A command line based comic book downloader
 
 ### requirements
     - Google Chrome
     - >=python3.5
 
 ### installation
-    `pip3 install comicdl`
+    pip3 install comicdl
 
 ### commands
 

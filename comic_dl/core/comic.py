@@ -73,12 +73,16 @@ class Comic:
     def get_updates(self, driver: Driver) -> list:
         available = self.list_available(driver)
 
-        last_read = list(filter(
-            lambda i: get_issue_num(i[0]) == self.last_downloaded,
-            available
-        ))[0]
+        try:
+            last_read = list(filter(
+                lambda i: get_issue_num(i[0]) == self.last_downloaded,
+                available
+            ))[0]
+        except IndexError:
+            idx = None
+        else:
+            idx = available.index(last_read)
 
-        idx = available.index(last_read)
         updates = available[:idx]
 
         latest_issue = get_issue_num(available[0][0])
