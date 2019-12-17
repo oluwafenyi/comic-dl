@@ -26,6 +26,13 @@ class AliasNotSpecified(ArgumentNotSpecified):
         super().__init__(msg, *args, **kwargs)
 
 
+class IssueNotAvailable(Exception):
+    msg = 'The issue specified has not been released.'
+
+    def __init__(self, msg=msg, *args, **kwargs):
+        super().__init__(msg, *args, **kwargs)
+
+
 class NetworkError(Exception):
     msg = 'No internet connection available or page not found.'
 

@@ -1,7 +1,7 @@
 
 from comic_dl.utils.db import ComicDB
 from comic_dl.utils.driver import Driver
-from comic_dl.utils.exceptions import ComicDoesNotExist
+from comic_dl.utils.exceptions import ComicDoesNotExist, IssueNotAvailable
 from comic_dl.utils.helpers import get_issue_num, get_annual_num
 
 
@@ -49,25 +49,48 @@ class Comic:
             raise ComicDoesNotExist()
         return Comic(*comic[1:])
 
-    def _get_listing(self, driver: Driver):
+    def get_listing(self, driver: Driver):
         driver.get(self.link)
         return driver.find_elements_by_css_selector('table.listing td a')
 
     def get_issues(self, driver: Driver):
-        listing = self._get_listing(driver)
+        listing = self.get_listing(driver)
         issues = list(filter(
-            lambda e: get_issue_num(e.get_attribute('textContent')),
+            lambda e:
+                get_issue_num(e.get_attribute('textContent')) is not None,
             listing
         ))
         return issues
 
+    def get_issue_link(self, driver: Driver, issue):
+        issues = self.get_issues(driver)
+        try:
+            return list(filter(
+                lambda e:
+                    get_issue_num(e.get_attribute('textContent')) == issue,
+                issues
+            ))[0].get_attribute('href')
+        except IndexError:
+            raise IssueNotAvailable
+
     def get_annuals(self, driver: Driver):
-        listing = self._get_listing(driver)
+        listing = self.get_listing(driver)
         annuals = list(filter(
             lambda e: get_annual_num(e.get_attribute('textContent')),
             listing
         ))
         return annuals
+
+    def get_annual_link(self, driver: Driver, annual):
+        issues = self.get_annuals(driver)
+        try:
+            return list(filter(
+                lambda e:
+                    get_annual_num(e.get_attribute('textContent')) == annual,
+                issues
+            ))[0].get_attribute('href')
+        except IndexError:
+            raise IssueNotAvailable
 
     def get_updates(self, driver: Driver) -> list:
         available = self.list_available(driver)
@@ -91,7 +114,7 @@ class Comic:
         return updates
 
     def list_available(self, driver: Driver) -> list:
-        available_issues = self._get_listing(driver)
+        available_issues = self.get_listing(driver)
         available =\
             [issue.get_attribute('textContent').strip()
                 for issue in available_issues]

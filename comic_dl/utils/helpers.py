@@ -9,6 +9,10 @@ from comic_dl.core import config
 from comic_dl.utils.exceptions import PlatformNotSupported
 
 
+def normalize(text):
+    return re.sub(r'\s+', ' ', text)
+
+
 def get_issue_num(text):
     match = re.search(r'#(\d+)', text)
     if match:
@@ -64,7 +68,7 @@ def zip_comic(comic_title, archive_name, images):
     path = os.path.join(config.ARCHIVE_PATH, comic_title)
     if not os.path.exists(path):
         os.makedirs(path)
-    path = os.path.join(path, archive_name)
+    path = os.path.join(path, '{}.cbz'.format(archive_name))
     with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_STORED) as zf:
         for img in images:
             zf.write(img, compress_type=zipfile.ZIP_STORED)

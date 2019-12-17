@@ -86,23 +86,25 @@ class HandlerMixin:
 
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
+        link = comic.get_issue_link(self.driver, issue)
         cd = ComicDownloader(comic)
-        path = cd.download_issue(self.driver, issue=issue)
+        path = cd.download_issue(self.driver, link=link)
         if path:
             print('Comic downloaded to {}'.format(path))
 
     def download_annual(self, alias, annual):
         comic = Comic.get_by_alias(alias)
+        link = comic.get_annual_link(self.driver, annual)
         cd = ComicDownloader(comic)
-        path = cd.download_issue(self.driver, annual=annual)
+        path = cd.download_issue(self.driver, link=link)
         if path:
             print('Comic downloaded to {}'.format(path))
 
     def download_issues(self, alias, range_, all_):
         comic = Comic.get_by_alias(alias)
         cd = ComicDownloader(comic)
-        if not all_:
 
+        if range_:
             try:
                 start, end = map(lambda arg: int(arg), range_.split('-'))
             except ValueError:
@@ -110,12 +112,21 @@ class HandlerMixin:
                     'Range should be of form: "a-b", where a and b are '
                     'integers'
                 )
-
             start, end = sorted([start, end])
-            paths = cd.download_issues(self.driver, start, end)
-        else:
-            comic.get_updates(self.driver)
-            paths = cd.download_issues(self.driver)
+            issue_lst = list(range(start, end + 1))
+            issues = comic.get_issues(self.driver)
+            issues = list(filter(
+                lambda l:
+                    get_issue_num(l.get_attribute('textContent')) in issue_lst,
+                issues
+            ))
+            links = reversed([l.get_attribute('href') for l in issues])
+            paths = cd.download_issues(self.driver, links)
+
+        elif all_:
+            listing = comic.get_listing(self.driver)
+            links = reversed([l.get_attribute('href') for l in listing])
+            paths = cd.download_issues(self.driver, links)
 
         if paths:
             print('Comics downloaded to: ')
