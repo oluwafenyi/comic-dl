@@ -3,7 +3,7 @@ import sys
 import tempfile
 import appdirs
 
-from utils.helpers import get_chrome_driver
+from comic_dl.utils.helpers import get_chrome_driver
 
 
 __dbName__ = 'comic.db'

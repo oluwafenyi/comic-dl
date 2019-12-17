@@ -1,8 +1,8 @@
 
-from core.comic import Comic
-from core.downloader import ComicDownloader
-from utils.exceptions import InvalidRangeException
-from utils.helpers import get_issue_num
+from comic_dl.core.comic import Comic
+from comic_dl.core.downloader import ComicDownloader
+from comic_dl.utils.exceptions import InvalidRangeException
+from comic_dl.utils.helpers import get_issue_num
 
 
 def set_alias(title):

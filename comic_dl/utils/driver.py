@@ -7,8 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from core.config import CHROMEDRIVER
-from utils.exceptions import NetworkError
+from comic_dl.core.config import CHROMEDRIVER
+from comic_dl.utils.exceptions import NetworkError
 
 
 class Driver(selenium.webdriver.Chrome):

@@ -2,7 +2,7 @@ import os
 import sqlite3
 from sqlite3 import IntegrityError
 
-from core import config
+from comic_dl.core import config
 
 
 class ComicDB():

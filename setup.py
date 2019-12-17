@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from comic_dl.core import __version__
 
 
@@ -17,7 +17,7 @@ setup(
     license='MIT',
     zip_safe=False,
     include_package_data=True,
-    packages=find_packages(),
+    packages=['comic_dl', 'comic_dl.core', 'comic_dl.utils'],
     install_requires=requirements,
     keywords='comics comic download cli',
     python_requires='>3.5',

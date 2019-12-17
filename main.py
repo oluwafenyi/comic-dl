@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from core.commands import execute_from_command_line
+from comic_dl.core.commands import execute_from_command_line
 
 
 # todo: comment code

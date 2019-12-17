@@ -4,10 +4,10 @@ import time
 
 from tqdm import tqdm
 
-from core.comic import Comic
-from utils.driver import Driver
-from utils.exceptions import NetworkError
-from utils.helpers import (
+from comic_dl.core.comic import Comic
+from comic_dl.utils.driver import Driver
+from comic_dl.utils.exceptions import NetworkError
+from comic_dl.utils.helpers import (
     download_page,
     zip_comic,
     get_size,

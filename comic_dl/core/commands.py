@@ -5,9 +5,9 @@ import sys
 from selenium.webdriver.remote.remote_connection import LOGGER
 
 from . import __version__
-from core.handlers import HandlerMixin
-from utils.driver import Driver
-from utils.exceptions import ArgumentNotSpecified, AliasNotSpecified
+from comic_dl.core.handlers import HandlerMixin
+from comic_dl.utils.driver import Driver
+from comic_dl.utils.exceptions import ArgumentNotSpecified, AliasNotSpecified
 
 
 LOGGER.setLevel(logging.WARNING)
@@ -34,7 +34,7 @@ class CommandUtility(HandlerMixin):
             '-v',
             '--version',
             action='version',
-            version='%(prog)s {version}'.format(version=__version__)
+            version='comicdl - {version}'.format(version=__version__)
         )
 
         parser.add_argument(

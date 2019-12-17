@@ -1,9 +1,8 @@
 
-from utils.db import ComicDB
-from utils.driver import Driver
-from utils.exceptions import ComicDoesNotExist
-
-from utils.helpers import get_issue_num, get_annual_num
+from comic_dl.utils.db import ComicDB
+from comic_dl.utils.driver import Driver
+from comic_dl.utils.exceptions import ComicDoesNotExist
+from comic_dl.utils.helpers import get_issue_num, get_annual_num
 
 
 class Comic:

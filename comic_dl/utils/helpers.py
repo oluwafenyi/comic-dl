@@ -5,8 +5,8 @@ import zipfile
 
 import requests
 
-from core import config
-from utils.exceptions import PlatformNotSupported
+from comic_dl.core import config
+from comic_dl.utils.exceptions import PlatformNotSupported
 
 
 def get_issue_num(text):
