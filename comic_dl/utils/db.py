@@ -65,7 +65,8 @@ class ComicDB():
 
     def get_all(self):
         sql_select_all = """
-        SELECT * FROM comics;
+        SELECT * FROM comics
+        ORDER BY latest_issue DESC, last_downloaded DESC;
         """
         self.cursor.execute(sql_select_all)
         return self.cursor.fetchall()
