@@ -20,6 +20,10 @@
 
     Displays a list of all comics on watchlist, their aliases and last downloaded issues
 
+- `comic-dl download -l="<link>"`
+
+    Takes the link to a comic series and downloads all issues for that series. No watching.
+
 - `comic-dl download <alias> -i=<n> | -a=<n> | -r=<n>-<m> | --all`
 
     Downloads comic issues specified for a comic series specified by an alias

@@ -31,9 +31,17 @@ class ComicDownloader:
         title = driver.find_element_by_css_selector('title')\
             .get_attribute('textContent').strip()
         title = _(title.split('-')[0].strip())
+        comic_series = driver.find_element_by_css_selector('div#navsubbar a')\
+            .get_attribute('textContent').strip()
+        comic_series = _(comic_series).replace('Comic', '')\
+            .replace('information', '').strip()
         img_links = self._image_links(driver)
         if img_links:
-            return {'title': title, 'img_links': img_links}
+            return {
+                'series': comic_series,
+                'title': title,
+                'img_links': img_links
+            }
         raise NetworkError
 
     def _download_pages(self, desc, links):
@@ -49,6 +57,7 @@ class ComicDownloader:
         dict_data = self.get_image_links(driver, comic_link=link)
         title = dict_data['title']
         links = dict_data['img_links']
+        series = dict_data['series']
 
         if not many:
             size = sum(size for size in
@@ -58,7 +67,11 @@ class ComicDownloader:
                 return
 
         img_paths = self._download_pages(title, links)
-        path = zip_comic(self.comic.title, title, img_paths)
+
+        if self.comic:
+            series = self.comic.title
+
+        path = zip_comic(series, title, img_paths)
         issue = get_issue_num(title)
 
         if issue is not None and self.comic is not None:

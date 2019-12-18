@@ -145,6 +145,18 @@ class HandlerMixin:
             for path in paths:
                 print(path)
 
+    def download_series(self, link):
+        comic = Comic('', link, '')
+        cd = ComicDownloader()
+        links = comic.get_listing(self.driver)
+        links = [l.get_attribute('href') for l in links]
+        paths = cd.download_issues(self.driver, links)
+
+        if paths:
+            print('Comics downloaded to: ')
+            for path in paths:
+                print(path)
+
     def get_updates(self):
         updates = {}
         for comic in Comic.list_watched():

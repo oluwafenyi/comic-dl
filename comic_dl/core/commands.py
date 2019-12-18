@@ -133,9 +133,16 @@ class CommandUtility(HandlerMixin):
                 raise ArgumentNotSpecified('-q or -l argument expected')
 
         elif self.args.command == 'download':
+
+            if self.args.link:
+                self.driver = Driver()
+                self.download_series(self.args.link)
+                return
+
             alias = self.args.alias
             if not alias:
                 raise AliasNotSpecified
+
             self.driver = Driver()
 
             if self.args.issue:
