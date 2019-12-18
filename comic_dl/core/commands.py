@@ -42,8 +42,8 @@ class CommandUtility(HandlerMixin):
             type=str,
             help="""
             Command Options:
-            * add: Finds comics based on query and adds your choice to the
-                      database under specified alias.
+            * watch: Finds comics based on query and adds your choice to the
+                     database under specified alias.
 
             * watched: Lists all comics in database along with aliases.
 
@@ -119,7 +119,7 @@ class CommandUtility(HandlerMixin):
         if self.args.command == 'watched':
             self.display_watched()
 
-        elif self.args.command == 'add':
+        elif self.args.command == 'watch':
             query = self.args.query
             link = self.args.link
             self.driver = Driver()

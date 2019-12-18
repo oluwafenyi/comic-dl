@@ -10,7 +10,7 @@
 
 ### commands
 
-- `comic-dl add -q="<query>" | -l="<link>"`
+- `comic-dl watch -q="<query>" | -l="<link>"`
 
     The add command is used to add comics to a watchlist where comics are specially identified by an alias
     - You can add comics by searching for them with`-q` or
