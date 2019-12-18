@@ -122,6 +122,7 @@ class CommandUtility(HandlerMixin):
         elif self.args.command == 'add':
             query = self.args.query
             link = self.args.link
+            self.driver = Driver()
             if query:
                 self.add_comic_to_watched(query)
 
