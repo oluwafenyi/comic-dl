@@ -7,8 +7,9 @@ from comic_dl.utils.helpers import get_issue_num
 
 def set_alias(title):
     alias = input('Set an alias for "{}"\n>>> '.format(title))
-    if alias.isnumeric() or alias.isspace() or ' ' in alias:
-        print('not a valid alias, alias should be alphanumeric, no spaces')
+    if alias.isnumeric() or alias.isspace() or ' ' in alias or len(alias) > 20:
+        print('not a valid alias, alias should be alphanumeric, no spaces,'
+              ' with at most 20 characters')
         alias = ''
     if not Comic.is_alias_unique(alias):
         print('alias already used')
@@ -32,20 +33,20 @@ def get_choice(options):
 class HandlerMixin:
     def display_watched(self):
         watched = Comic.list_watched()
-        print('|{:20}  {:<20}  {:<20}  {:<20}|'
+        print('|{:20}  {:<20}  {:<15}  {:<12}|'
               .format('Comic', 'Alias', 'Last Downloaded', 'Latest Issue'))
         for comic in watched:
             if len(comic.title) > 20:
-                print('|{:20}  {:<20}  {:<20}  {:<20}|'
+                print('|{:20}  {:<20}  {:<15}  {:<12}|'
                       .format(comic.title[:20], comic.alias,
                               comic.last_downloaded, comic.latest_issue))
-                print('|{:20}  {:<20}  {:<20}  {:<20}|'
+                print('|{:20}  {:<20}  {:<15}  {:<12}|'
                       .format('-' + comic.title[20:], '', '', ''))
             else:
-                print('|{:20}  {:<20}  {:<20}  {:<20}|'
+                print('|{:20}  {:<20}  {:<15}  {:<12}|'
                       .format(comic.title, comic.alias, comic.last_downloaded,
                               comic.latest_issue))
-            print('|{:20}  {:<20}  {:<20}  {:<20}|'.format('', '', '', ''))
+            print('|{:20}  {:<20}  {:<15}  {:<12}|'.format('', '', '', ''))
 
     def add_comic_to_watched(self, query):
         self.driver.get(params={'keyword': query})
