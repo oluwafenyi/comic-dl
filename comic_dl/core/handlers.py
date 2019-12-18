@@ -76,6 +76,7 @@ class HandlerMixin:
                         return
 
                 comic = Comic(*choice, alias=alias)
+                comic.get_updates(self.driver)
                 comic.save()
                 print('Added "{}" to list of watched comics...'
                       .format(choice[0]))
@@ -93,6 +94,7 @@ class HandlerMixin:
         while not alias:
             alias = set_alias(title)
         comic = Comic(title, link, alias, latest_issue=latest_issue)
+        comic.get_updates(self.driver)
         comic.save()
         print('Added "{}" to list of watched comics under...'.format(title))
 
