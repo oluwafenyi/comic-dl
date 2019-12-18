@@ -62,6 +62,8 @@ class HandlerMixin:
                 alias = ''
                 while not alias:
                     alias = set_alias(choice[0])
+                    if alias.lower() == 'q':
+                        return
 
                 comic = Comic(*choice, alias=alias)
                 comic.save()
