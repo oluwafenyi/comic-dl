@@ -1,5 +1,5 @@
 # comic-dl
-    A command line based comic book downloader
+    A command line based comic book downloader. All comics are gotten from readcomicsonline
 
 ### requirements
     - Google Chrome
@@ -22,7 +22,7 @@
 
 - `comic-dl download -l="<link>"`
 
-    Takes the link to a comic series and downloads all issues for that series. No watching.
+    Takes the readcomicsonline link to a comic series and downloads all issues for that series. No watching.
 
 - `comic-dl download <alias> -i=<n> | -a=<n> | -r=<n>-<m> | --all`
 
