@@ -10,7 +10,7 @@ from comic_dl.utils.exceptions import PlatformNotSupported
 
 
 def normalize(text):
-    return re.sub(r'\s+', ' ', text)
+    return re.sub(r'\s+', ' ', text).replace(':', '-')
 
 
 def get_issue_num(text):
