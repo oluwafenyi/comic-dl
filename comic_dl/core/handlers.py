@@ -98,6 +98,11 @@ class HandlerMixin:
         comic.save()
         print('Added "{}" to list of watched comics under...'.format(title))
 
+    def stop_watching(self, alias):
+        comic = Comic.get_by_alias(alias)
+        comic.delete()
+        print('Stopped watching comic: {}'.format(alias))
+
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
         link = comic.get_issue_link(self.driver, issue)

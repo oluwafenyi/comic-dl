@@ -22,6 +22,10 @@ class Comic:
         with ComicDB() as db:
             db.save(**vars(self))
 
+    def delete(self):
+        with ComicDB() as db:
+            db.delete(self.alias)
+
     @classmethod
     def list_watched(cls) -> list:
         """
@@ -106,11 +110,6 @@ class Comic:
             idx = available.index(last_read)
 
         updates = available[:idx]
-
-        latest_issue = get_issue_num(available[0][0])
-        self.latest_issue = latest_issue
-        self.save()
-
         return updates
 
     def list_available(self, driver: Driver) -> list:
@@ -118,6 +117,11 @@ class Comic:
         available =\
             [issue.get_attribute('textContent').strip()
                 for issue in available_issues]
+
+        latest_issue = get_issue_num(available[0])
+        self.latest_issue = latest_issue
+        self.save()
+
         dates = driver.\
             find_elements_by_css_selector('table.listing tr td:nth-child(2)')
         dates = [date.get_attribute('textContent').strip() for date in dates]

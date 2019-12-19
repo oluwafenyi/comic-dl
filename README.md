@@ -20,6 +20,10 @@
 
     Displays a list of all comics on watchlist, their aliases and last downloaded issues
 
+- `comic-dl stopwatch <alias>`
+
+    Removes a comic from the watchlist
+
 - `comic-dl download -l="<link>"`
 
     Takes the readcomicsonline link to a comic series and downloads all issues for that series. No watching.

@@ -45,6 +45,8 @@ class CommandUtility(HandlerMixin):
             * watch: Finds comics based on query and adds your choice to the
                      database under specified alias.
 
+            * stopwatch: Deletes aliased comic from watchlist.
+
             * watched: Lists all comics in database along with aliases.
 
             * download: Downloads comic issues for comic specified by alias
@@ -168,6 +170,12 @@ class CommandUtility(HandlerMixin):
                 raise AliasNotSpecified
             self.driver = Driver()
             self.list_available(alias)
+
+        elif self.args.command == 'stopwatch':
+            alias = self.args.alias
+            if not alias:
+                raise AliasNotSpecified
+            self.stop_watching(alias)
 
         else:
             parser.print_help()

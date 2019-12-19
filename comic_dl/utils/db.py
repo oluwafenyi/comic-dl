@@ -63,6 +63,14 @@ class ComicDB():
             self.cursor.execute(sql_update_comic)
             self.conn.commit()
 
+    def delete(self, alias):
+        sql_delete_comic = """
+        DELETE FROM comics
+        WHERE alias = "{}";
+        """.format(alias)
+        self.cursor.execute(sql_delete_comic)
+        self.conn.commit()
+
     def get_all(self):
         sql_select_all = """
         SELECT * FROM comics
