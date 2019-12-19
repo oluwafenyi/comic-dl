@@ -101,7 +101,7 @@ class HandlerMixin:
     def stop_watching(self, alias):
         comic = Comic.get_by_alias(alias)
         comic.delete()
-        print('Stopped watching comic: {}'.format(alias))
+        print('Stopped watching comic: {}'.format(comic.title))
 
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
@@ -156,7 +156,7 @@ class HandlerMixin:
         comic = Comic('', link, '')
         cd = ComicDownloader()
         links = comic.get_listing(self.driver)
-        links = [l.get_attribute('href') for l in links]
+        links = reversed([l.get_attribute('href') for l in links])
         paths = cd.download_issues(self.driver, links)
 
         if paths:
