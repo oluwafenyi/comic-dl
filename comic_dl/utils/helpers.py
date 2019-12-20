@@ -4,13 +4,15 @@ import stat
 import zipfile
 
 import requests
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 
 from comic_dl.core import config
 from comic_dl.utils.exceptions import PlatformNotSupported
 
 
 def normalize(text):
-    return re.sub(r'\s+', ' ', text).replace(':', '-')
+    return re.sub(r'\s+', ' ', text).replace(':', ' -')
 
 
 def get_issue_num(text):
@@ -50,6 +52,15 @@ def download_prompt(size):
 
 def download_page(entry):
     page_number, uri = entry
+
+    res = requests.Session()
+    retries = Retry(
+        total=5,
+        backoff_factor=0.3,
+        status_forcelist=[500, 502, 503, 504],
+    )
+    res.mount('https://', HTTPAdapter(max_retries=retries))
+
     res = requests.get(uri)
     cd = res.headers.get('content-disposition')
     extension = re.search(r'filename="(.*)"', cd).group(1).split('.')[-1]
@@ -60,6 +71,7 @@ def download_page(entry):
     with open(path, 'wb') as img:
         for block in res.iter_content(1024):
             img.write(block)
+    res.close()
     return path
 
 

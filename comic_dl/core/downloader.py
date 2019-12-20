@@ -69,7 +69,7 @@ class ComicDownloader:
         img_paths = self._download_pages(title, links)
 
         if self.comic:
-            series = self.comic.title
+            series = _(self.comic.title)
 
         path = zip_comic(series, title, img_paths)
         issue = get_issue_num(title)
