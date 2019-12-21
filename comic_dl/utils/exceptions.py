@@ -38,3 +38,11 @@ class NetworkError(Exception):
 
     def __init__(self, msg=msg, *args, **kwargs):
         super().__init__(msg, *args, **kwargs)
+
+
+class CAPTCHAError(Exception):
+    msg = 'The site brought out a captcha, please wait for some time before' +\
+          ' trying again.'
+
+    def __init__(self, msg=msg, *args, **kwargs):
+        super().__init__(msg, *args, **kwargs)

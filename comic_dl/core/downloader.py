@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from comic_dl.core.comic import Comic
 from comic_dl.utils.driver import Driver
-from comic_dl.utils.exceptions import NetworkError
+from comic_dl.utils.exceptions import NetworkError, CAPTCHAError
 from comic_dl.utils.helpers import (
     download_page,
     zip_comic,
@@ -31,8 +31,18 @@ class ComicDownloader:
         title = driver.find_element_by_css_selector('title')\
             .get_attribute('textContent').strip()
         title = _(title.split('-')[0].strip())
-        comic_series = driver.find_element_by_css_selector('div#navsubbar a')\
-            .get_attribute('textContent').strip()
+
+        try:
+            comic_series = driver\
+                .find_element_by_css_selector('div#navsubbar a')\
+                .get_attribute('textContent').strip()
+        except NetworkError:
+            title = driver.find_element_by_css_selector('title')\
+                .get_attribute('textContent').strip()
+            if _(title).strip().lower() == 'are you human':
+                raise CAPTCHAError
+            raise
+
         comic_series = _(comic_series).replace('Comic', '')\
             .replace('information', '').strip()
         img_links = self._image_links(driver)
