@@ -119,7 +119,7 @@ class Comic:
                 for issue in available_issues]
 
         latest_issue = get_issue_num(available[0])
-        self.latest_issue = latest_issue
+        self.latest_issue = latest_issue or 0
         self.save()
 
         dates = driver.\
