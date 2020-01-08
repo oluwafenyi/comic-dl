@@ -66,6 +66,14 @@ class CommandUtility(HandlerMixin):
             nargs='?'
         )
 
+        parser.add_argument(
+            '--nonheadless',
+            type=bool,
+            help='-option to view the browser nonheadleassly',
+            nargs='?',
+            const=True
+        )
+
         add_options = parser.add_mutually_exclusive_group()
 
         add_options.add_argument(
@@ -124,7 +132,7 @@ class CommandUtility(HandlerMixin):
         elif self.args.command == 'watch':
             query = self.args.query
             link = self.args.link
-            self.driver = Driver()
+            self.driver = Driver(nonheadless=self.args.nonheadless)
             if query:
                 self.add_comic_to_watched(query)
 
@@ -137,7 +145,7 @@ class CommandUtility(HandlerMixin):
         elif self.args.command == 'download':
 
             if self.args.link:
-                self.driver = Driver()
+                self.driver = Driver(nonheadless=self.args.nonheadless)
                 self.download_series(self.args.link)
                 return
 
@@ -145,7 +153,7 @@ class CommandUtility(HandlerMixin):
             if not alias:
                 raise AliasNotSpecified
 
-            self.driver = Driver()
+            self.driver = Driver(nonheadless=self.args.nonheadless)
 
             if self.args.issue:
                 self.download_issue(alias, self.args.issue)
@@ -161,14 +169,14 @@ class CommandUtility(HandlerMixin):
                 )
 
         elif self.args.command == 'updates':
-            self.driver = Driver()
+            self.driver = Driver(nonheadless=self.args.nonheadless)
             self.get_updates()
 
         elif self.args.command == 'issues':
             alias = self.args.alias
             if not alias:
                 raise AliasNotSpecified
-            self.driver = Driver()
+            self.driver = Driver(nonheadless=self.args.nonheadless)
             self.list_available(alias)
 
         elif self.args.command == 'stopwatch':

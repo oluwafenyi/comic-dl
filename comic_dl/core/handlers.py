@@ -96,7 +96,7 @@ class HandlerMixin:
         comic = Comic(title, link, alias, latest_issue=latest_issue)
         comic.get_updates(self.driver)
         comic.save()
-        print('Added "{}" to list of watched comics under...'.format(title))
+        print('Added "{}" to list of watched comics...'.format(title))
 
     def stop_watching(self, alias):
         comic = Comic.get_by_alias(alias)
