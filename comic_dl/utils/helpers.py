@@ -19,9 +19,9 @@ def normalize(text):
 
 
 def get_issue_num(text):
-    match = re.search(r'#(\d+)', text)
+    match = re.search(r'#(\d+(\.\d+)?)', text)
     if match:
-        return int(match.group(1))
+        return float(match.group(1))
     return None
 
 

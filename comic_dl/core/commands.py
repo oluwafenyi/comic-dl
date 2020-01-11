@@ -98,7 +98,7 @@ class CommandUtility(HandlerMixin):
         download_options.add_argument(
             '--issue',
             '-i',
-            type=int,
+            type=float,
             help='-Used with the download flag to specify issue to be '
                  'downloaded',
         )
