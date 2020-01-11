@@ -1,7 +1,7 @@
 
 from comic_dl.core.comic import Comic
 from comic_dl.core.downloader import ComicDownloader
-from comic_dl.utils.exceptions import InvalidRangeException
+from comic_dl.utils.exceptions import InvalidRangeException, IssueNotAvailable
 from comic_dl.utils.helpers import get_issue_num
 
 
@@ -103,6 +103,40 @@ class HandlerMixin:
         comic.delete()
         print('Stopped watching comic: {}'.format(comic.title))
 
+    def download_listing_entry(self, alias, n):
+        comic = Comic.get_by_alias(alias)
+        listing = list(reversed(comic.get_listing(self.driver)))
+        try:
+            link = listing[n].get_attribute('href')
+        except IndexError:
+            raise IssueNotAvailable
+        else:
+            cd = ComicDownloader(comic)
+            path = cd.download_issue(self.driver, link=link)
+            if path:
+                print('Comic downloaded to {}'.format(path))
+
+    def download_listing_entries(self, alias, range_):
+        comic = Comic.get_by_alias(alias)
+        try:
+            start, end = map(lambda arg: int(arg), range_.split('-'))
+        except ValueError:
+            raise InvalidRangeException(
+                'Range should be of form: "a-b", where a and b are '
+                'integers'
+            )
+        start, end = sorted([start, end])
+        listing = list(reversed(comic.get_listing(self.driver)))
+        links = [
+            link.get_attribute('href') for link in listing[start:end + 1]
+        ]
+        cd = ComicDownloader(comic)
+        paths = cd.download_issues(self.driver, links)
+        if paths:
+            print('Comics downloaded to: ')
+            for path in paths:
+                print(path)
+
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
         link = comic.get_issue_link(self.driver, issue)
@@ -186,5 +220,6 @@ class HandlerMixin:
         comic = Comic.get_by_alias(alias)
         available = comic.list_available(self.driver)
         print('Available comics for {}:'.format(comic.title))
-        for issue, date in available:
-            print('{:20}      {:<20}'.format(issue, date))
+        for index, issue_data in enumerate(available):
+            issue, date = issue_data
+            print('{}. {:20}      {:<20}'.format(index, issue, date))

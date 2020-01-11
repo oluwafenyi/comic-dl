@@ -113,18 +113,20 @@ class Comic:
         return updates
 
     def list_available(self, driver: Driver) -> list:
-        available_issues = self.get_listing(driver)
+        available_issues = reversed(self.get_listing(driver))
         available =\
             [issue.get_attribute('textContent').strip()
                 for issue in available_issues]
 
-        latest_issue = get_issue_num(available[0])
+        latest_issue = get_issue_num(available[-1])
         self.latest_issue = latest_issue or 0
         self.save()
 
         dates = driver.\
             find_elements_by_css_selector('table.listing tr td:nth-child(2)')
-        dates = [date.get_attribute('textContent').strip() for date in dates]
+        dates = list(reversed(
+            [date.get_attribute('textContent').strip() for date in dates]
+        ))
 
         available = list(zip(available, dates))
         return available

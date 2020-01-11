@@ -103,6 +103,12 @@ class CommandUtility(HandlerMixin):
                  'downloaded',
         )
         download_options.add_argument(
+            '-n',
+            type=int,
+            help='-Used with download flag to specify n-th listing entry to be'
+                 ' downloaded. Indexing begins from 0.',
+        )
+        download_options.add_argument(
             '--annual',
             '-a',
             type=int,
@@ -115,6 +121,13 @@ class CommandUtility(HandlerMixin):
             type=str,
             help='-Used to specify an inclusive range of issues to be '
                  'downloaded. ex: -r=3-21'
+        )
+        download_options.add_argument(
+            '--nrange',
+            '-nr',
+            type=str,
+            help='-Used to specify an inclusive range of entry indexes to be '
+                 'downloaded. ex: -nr=5-9'
         )
         download_options.add_argument(
             '--all',
@@ -155,7 +168,13 @@ class CommandUtility(HandlerMixin):
 
             self.driver = Driver(nonheadless=self.args.nonheadless)
 
-            if self.args.issue:
+            if self.args.n:
+                self.download_listing_entry(alias, self.args.n)
+
+            if self.args.nrange:
+                self.download_listing_entries(alias, self.args.nrange)
+
+            elif self.args.issue:
                 self.download_issue(alias, self.args.issue)
 
             elif self.args.annual:
