@@ -69,7 +69,7 @@ class CommandUtility(HandlerMixin):
         parser.add_argument(
             '--nonheadless',
             type=bool,
-            help='-option to view the browser nonheadleassly',
+            help='-option to view the browser nonheadlessly',
             nargs='?',
             const=True
         )
