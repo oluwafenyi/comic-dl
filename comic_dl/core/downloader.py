@@ -30,7 +30,7 @@ class ComicDownloader:
         driver.get(comic_link, params={'quality': 'hq'})
         title = driver.find_element_by_css_selector('title')\
             .get_attribute('textContent').strip()
-        while title.lower == 'just a moment...':
+        while 'just a moment' in title.lower():
             title = driver.find_element_by_css_selector('title')\
                 .get_attribute('textContent').strip()
         title = _(title.split('-')[0].strip())

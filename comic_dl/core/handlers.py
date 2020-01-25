@@ -1,7 +1,9 @@
 
 from comic_dl.core.comic import Comic
 from comic_dl.core.downloader import ComicDownloader
-from comic_dl.utils.exceptions import InvalidRangeException, IssueNotAvailable
+from comic_dl.utils.exceptions import (
+    InvalidRangeException, IssueNotAvailable, NetworkError
+)
 from comic_dl.utils.helpers import get_issue_num
 
 
@@ -137,6 +139,12 @@ class HandlerMixin:
             for path in paths:
                 print(path)
 
+    def download_issue_by_link(self, link):
+        cd = ComicDownloader()
+        path = cd.download_issue(self.driver, link=link)
+        if path:
+            print('Comic downloaded to {}'.format(path))
+
     def download_issue(self, alias, issue):
         comic = Comic.get_by_alias(alias)
         link = comic.get_issue_link(self.driver, issue)
@@ -189,14 +197,17 @@ class HandlerMixin:
     def download_series(self, link):
         comic = Comic('', link, '')
         cd = ComicDownloader()
-        links = comic.get_listing(self.driver)
-        links = reversed([l.get_attribute('href') for l in links])
-        paths = cd.download_issues(self.driver, links)
-
-        if paths:
-            print('Comics downloaded to: ')
-            for path in paths:
-                print(path)
+        try:
+            links = comic.get_listing(self.driver)
+        except NetworkError:
+            self.download_issue_by_link(link)
+        else:
+            links = reversed([l.get_attribute('href') for l in links])
+            paths = cd.download_issues(self.driver, links)
+            if paths:
+                print('Comics downloaded to: ')
+                for path in paths:
+                    print(path)
 
     def get_updates(self):
         updates = {}
